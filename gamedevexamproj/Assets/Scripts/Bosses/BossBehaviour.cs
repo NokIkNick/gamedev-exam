@@ -7,6 +7,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     [SerializeField] private Vector2 attackOffset = new Vector2(2f, 0.5f);
     [SerializeField] private int attackDamage = 1;
     [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private LayerMask attackMask;
 
     void Start()
@@ -49,7 +50,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
             Debug.Log("Hit: " + colInfo.name);
             colInfo.GetComponent<Health>()?.TakeDamage(attackDamage);
             Vector2 hitDirection = colInfo.transform.position - transform.position;
-            colInfo.GetComponent<Rigidbody2D>()?.AddForce(hitDirection * 5f, ForceMode2D.Impulse);
+            colInfo.GetComponent<Rigidbody2D>()?.AddForce(hitDirection * knockbackForce, ForceMode2D.Impulse);
         }
     }
 
