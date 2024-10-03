@@ -20,6 +20,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         
     }
 
+
     public void LookAtPlayer(){
         Vector3 flipped = transform.localScale;
         flipped.z *= -1f;

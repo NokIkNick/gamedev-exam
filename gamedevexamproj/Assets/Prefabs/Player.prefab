@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4569005052285974210}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CeilingCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 8777733309692152945}
   - component: {fileID: 4272618275765000167}
   - component: {fileID: 4958509541310727623}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -185,7 +185,8 @@ GameObject:
   - component: {fileID: 758854773283207552}
   - component: {fileID: 5529486973897641035}
   - component: {fileID: 4135305243348112939}
-  m_Layer: 0
+  - component: {fileID: 6043319261888870581}
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -255,7 +256,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -58257422950015923, guid: ca1b936990c2b354fb13f36f8858f297, type: 3}
-  m_Color: {r: 0.90188676, g: 0.13443208, b: 0.13443208, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -576,6 +577,21 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &6043319261888870581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477470246009592664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc739ef9920c4bd4c98ce909e29bee25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  health: 3
+  isDamagable: 1
 --- !u!1 &4932677007737897939
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,7 +601,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1168110013817693665}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -9,7 +9,6 @@ public class Health : MonoBehaviour
     void Start()
     {
         health = maxHealth;
-        TakeDamage(1);
     }
 
     // Update is called once per frame
@@ -53,5 +52,9 @@ public class Health : MonoBehaviour
 
     public int GetHealth(){
         return health;
+    }
+
+    public int GetMaxHealth(){
+        return maxHealth;
     }
 }

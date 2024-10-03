@@ -13,13 +13,16 @@ public class BossState : StateMachineBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = animator.GetComponent<Rigidbody2D>();
         bossBehaviour = animator.GetComponent<BossBehaviour>();
+        
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        bossBehaviour.LookAtPlayer();
-
+        
         float distance = Vector2.Distance(player.position, rb.position);
+        
+        bossBehaviour.LookAtPlayer();
+        
         if(distance >= shootRange){
             animator.SetTrigger("Shoot");
         }else if(distance <= meleeRange){
