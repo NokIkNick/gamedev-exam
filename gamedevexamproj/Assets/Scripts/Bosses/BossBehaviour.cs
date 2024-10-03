@@ -1,13 +1,14 @@
 using UnityEngine;
 
-public class FirstBossBehaviour : MonoBehaviour
+public class BossBehaviour : MonoBehaviour, IBossBehaviour
 {
     private Transform player;
     private bool isFlipped = false;
-    [SerializeField] private Vector2 attackOffset = new Vector2(1f, 0.5f);
+    [SerializeField] private Vector2 attackOffset = new Vector2(2f, 0.5f);
     [SerializeField] private int attackDamage = 1;
-    [SerializeField] private float attackRange = 1f;
+    [SerializeField] private float attackRange = 2f;
     [SerializeField] private LayerMask attackMask;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -33,7 +34,7 @@ public class FirstBossBehaviour : MonoBehaviour
         }
     }
 
-    public bool getIsFlipped(){
+    public bool GetIsFlipped(){
         return isFlipped;
     }
 
@@ -45,7 +46,20 @@ public class FirstBossBehaviour : MonoBehaviour
 
         Collider2D colInfo = Physics2D.OverlapCircle(pos, attackRange, attackMask);
         if(colInfo != null){
+            Debug.Log("Hit: " + colInfo.name);
             colInfo.GetComponent<Health>()?.TakeDamage(attackDamage);
+            Vector2 hitDirection = colInfo.transform.position - transform.position;
+            colInfo.GetComponent<Rigidbody2D>()?.AddForce(hitDirection * 5f, ForceMode2D.Impulse);
         }
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Vector3 pos = transform.position;
+        pos += transform.right * attackOffset.x;
+        pos += transform.up * attackOffset.y;
+        Gizmos.DrawWireSphere(pos, attackRange);
     }
 }

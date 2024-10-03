@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6828049455628680377}
   - component: {fileID: 4190029155842259863}
   - component: {fileID: 494151556632792686}
-  - component: {fileID: 7761759926932556837}
+  - component: {fileID: 8907845672480059432}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -139,7 +139,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &7761759926932556837
+--- !u!114 &8907845672480059432
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,12 +151,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410d8d0cfb7b83f4bb11fa821fb5398a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackOffset: {x: 1, y: 0.5}
+  attackOffset: {x: -1.5, y: -0.89}
   attackDamage: 1
   attackRange: 1
   attackMask:
     serializedVersion: 2
     m_Bits: 64
+  health: 1
 --- !u!1 &5699878755877275684
 GameObject:
   m_ObjectHideFlags: 0

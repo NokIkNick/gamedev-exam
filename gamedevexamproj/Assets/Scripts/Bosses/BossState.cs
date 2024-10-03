@@ -1,18 +1,18 @@
 using UnityEngine;
 
-public class BossMovement : StateMachineBehaviour
+public class BossState : StateMachineBehaviour
 {
     private Transform player;
     private Rigidbody2D rb;
-    private FirstBossBehaviour bossBehaviour;
+    private BossBehaviour bossBehaviour;
     [SerializeField] private float shootRange = 6f;
-    [SerializeField] private float meleeRange = 3f;
+    [SerializeField] private float meleeRange = 2f;
     [SerializeField] private float speed = 2.5f;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = animator.GetComponent<Rigidbody2D>();
-        bossBehaviour = animator.GetComponent<FirstBossBehaviour>();
+        bossBehaviour = animator.GetComponent<BossBehaviour>();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
