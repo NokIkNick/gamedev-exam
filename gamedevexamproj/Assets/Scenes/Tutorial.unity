@@ -905,26 +905,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tutorial
       objectReference: {fileID: 0}
-    - target: {fileID: 6060786546943252473, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
-      propertyPath: m_TileSpriteArray.Array.data[11].m_Data
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6060786546943252473, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
-      propertyPath: m_TileSpriteArray.Array.data[12].m_Data
-      value: 
-      objectReference: {fileID: 1059082935, guid: dcaab6b4331bcf34d82c8a2fadd73822, type: 3}
-    - target: {fileID: 6060786546943252473, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
-      propertyPath: m_TileSpriteArray.Array.data[11].m_RefCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6060786546943252473, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
-      propertyPath: m_TileSpriteArray.Array.data[12].m_RefCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6060786546943252473, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
-      propertyPath: m_Tiles.Array.data[87].second.m_TileSpriteIndex
-      value: 12
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
