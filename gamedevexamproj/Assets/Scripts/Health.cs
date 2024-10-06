@@ -21,19 +21,24 @@ public class Health : MonoBehaviour
     public void TakeDamage(int damage){
         if(health > 0 && health - damage > 0 && isDamagable){
             health -= damage;
-            flash();
-            invincibility();
-        }else {
+            Flash();
+            Invincibility();
+        }else{
+            if(gameObject.tag == "Boss"){
+                return;
+            }
+            
+            Flash();
             Die();
         }
     }
 
-    public void flash(){
+    public void Flash(){
         GetComponent<SpriteRenderer>().color = Color.red;
-        Invoke("resetColor", 0.1f);
+        Invoke("ResetColor", 0.1f);
     }
 
-    public void resetColor(){
+    public void ResetColor(){
         GetComponent<SpriteRenderer>().color = Color.white;
     }
 
@@ -41,12 +46,12 @@ public class Health : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void invincibility(){
+    public void Invincibility(){
         isDamagable = false;
-        Invoke("resetInvincibility", 1f);
+        Invoke("ResetInvincibility", 1f);
     }
 
-    private void resetInvincibility(){
+    private void ResetInvincibility(){
         isDamagable = true;
     }
 

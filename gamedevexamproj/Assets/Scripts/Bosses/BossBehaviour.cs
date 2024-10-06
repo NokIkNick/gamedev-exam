@@ -9,6 +9,8 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private LayerMask attackMask;
+    [SerializeField] private bool isEnraged = false;
+    private bool isDead = false;
 
     void Start()
     {
@@ -17,9 +19,18 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
 
     void Update()
     {
-        
+        if(isDead){
+            if(GetDistanceToPlayer() > 15){
+                Destroy(gameObject);
+            }
+        }
     }
 
+    public void MoveTowardsPlayer(Rigidbody2D rb, float speed){
+        Vector2 target = new Vector2(player.position.x, rb.position.y);
+        Vector2 newPos = Vector2.MoveTowards(rb.position, target, speed * Time.fixedDeltaTime);
+        rb.MovePosition(newPos);
+    }
 
     public void LookAtPlayer(){
         Vector3 flipped = transform.localScale;
@@ -36,8 +47,16 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         }
     }
 
-    public bool GetIsFlipped(){
-        return isFlipped;
+    public void Engrage(){
+        SetIsEnraged(true);
+        Debug.Log("Boss is enraged!");
+        attackDamage = attackDamage * 2;
+        attackRange = 2;
+        knockbackForce = knockbackForce * 2;
+    }
+
+    public float GetDistanceToPlayer(){
+        return Vector2.Distance(transform.position, player.position);
     }
 
 
@@ -55,6 +74,23 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         }
     }
 
+    public bool GetIsFlipped(){
+        return isFlipped;
+    }
+
+    public bool GetIsEngraged(){
+        return isEnraged;
+    }
+
+    public void SetIsEnraged(bool enraged){
+        isEnraged = enraged;
+    }
+
+    public void EndBattle(){
+        Debug.Log("Boss is dead!");
+        Debug.Log("Dropping loot...");
+        isDead = true;
+    }
 
     private void OnDrawGizmosSelected()
     {
