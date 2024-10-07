@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossState : StateMachineBehaviour
@@ -18,6 +19,8 @@ public class BossState : StateMachineBehaviour
         rb = animator.GetComponent<Rigidbody2D>();
         bossBehaviour = animator.GetComponent<BossBehaviour>();
         isEnraged = bossBehaviour.GetIsEngraged();
+
+        bossBehaviour.Flash();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -69,5 +72,6 @@ public class BossState : StateMachineBehaviour
         animator.ResetTrigger("Die");
         animator.ResetTrigger("Roll");
     }
+
 
 }

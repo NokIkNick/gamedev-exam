@@ -362,6 +362,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 758854773283207552, guid: feef1eab60be12f43993b58a0d39ee8f, type: 3}
+      propertyPath: m_WhatIsGround.m_Bits
+      value: 167
+      objectReference: {fileID: 0}
     - target: {fileID: 3477470246009592664, guid: feef1eab60be12f43993b58a0d39ee8f, type: 3}
       propertyPath: m_Name
       value: Player
@@ -369,6 +373,10 @@ PrefabInstance:
     - target: {fileID: 3477470246009592664, guid: feef1eab60be12f43993b58a0d39ee8f, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6043319261888870581, guid: feef1eab60be12f43993b58a0d39ee8f, type: 3}
+      propertyPath: isDamagable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8008808918955616193, guid: feef1eab60be12f43993b58a0d39ee8f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -440,7 +448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1458217958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,6 +693,10 @@ PrefabInstance:
     - target: {fileID: 1802838572259743249, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2832116511757888080, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3671193508327171219, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
       propertyPath: m_Name

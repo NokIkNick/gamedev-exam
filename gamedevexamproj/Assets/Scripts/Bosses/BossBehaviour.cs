@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BossBehaviour : MonoBehaviour, IBossBehaviour
@@ -11,6 +12,10 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private LayerMask attackMask;
     [SerializeField] private bool isEnraged = false;
+    [SerializeField] private List<GameObject> projectiles;
+    [SerializeField] private float projectileOffsetX = 1f;
+    [SerializeField] private float projectileOffsetY = 1f;
+    [SerializeField] private Color flashColor = new Color(0.678f, 0.847f, 0.902f);
     private bool isDead = false;
 
     void Start()
@@ -56,6 +61,17 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         attackDamage *=  2;
         attackRange = 2;
         knockbackForce *= 2;
+    }
+
+    public void SpawnProjectile(){
+        foreach(GameObject projectile in projectiles){
+            if(!projectile.activeInHierarchy){
+                Vector2 direction = (player.position - transform.position).normalized;
+                Vector2 pos = new Vector2(transform.position.x + projectileOffsetX, transform.position.y + projectileOffsetY);
+                projectile.GetComponent<BossRocketScript>().Initialize(direction, pos, player.position);
+                break;
+            }
+        }
     }
 
 
@@ -123,5 +139,14 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         pos += transform.right * attackOffset.x;
         pos += transform.up * attackOffset.y;
         Gizmos.DrawWireSphere(pos, attackRange);
+    }
+
+    public void Flash(){
+        GetComponent<SpriteRenderer>().color = flashColor;
+        Invoke("ResetColor", 0.2f);
+    }
+
+    public void ResetColor(){
+        GetComponent<SpriteRenderer>().color = Color.white;
     }
 }

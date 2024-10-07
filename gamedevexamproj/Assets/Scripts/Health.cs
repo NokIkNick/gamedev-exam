@@ -19,6 +19,10 @@ public class Health : MonoBehaviour
 
 
     public void TakeDamage(int damage){
+        if(!isDamagable){
+            return;
+        }
+
         if(health > 0 && health - damage > 0 && isDamagable){
             health -= damage;
             Flash();
@@ -48,7 +52,7 @@ public class Health : MonoBehaviour
 
     public void Invincibility(){
         isDamagable = false;
-        Invoke("ResetInvincibility", 1f);
+        Invoke("ResetInvincibility", 1.5f);
     }
 
     private void ResetInvincibility(){
