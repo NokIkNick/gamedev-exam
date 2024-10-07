@@ -11,7 +11,6 @@ public class AwakeBoss : StateMachineBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = animator.GetComponent<Rigidbody2D>();
         healthbar = animator.transform.parent.GetChild(1).gameObject;
-        Debug.Log(healthbar.name);
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

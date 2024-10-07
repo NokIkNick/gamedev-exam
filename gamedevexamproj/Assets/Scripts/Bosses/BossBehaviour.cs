@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BossBehaviour : MonoBehaviour, IBossBehaviour
@@ -24,6 +25,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
                 Destroy(gameObject);
             }
         }
+
     }
 
     public void MoveTowardsPlayer(Rigidbody2D rb, float speed){
@@ -47,12 +49,34 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         }
     }
 
-    public void Engrage(){
+    public void Enrage(){
+        if(isEnraged) return;
+
         SetIsEnraged(true);
-        Debug.Log("Boss is enraged!");
-        attackDamage = attackDamage * 2;
+        attackDamage *=  2;
         attackRange = 2;
-        knockbackForce = knockbackForce * 2;
+        knockbackForce *= 2;
+    }
+
+
+    public void RollTowardsPlayer(Rigidbody2D rb, float speed, float duration, Animator animator){
+        StartCoroutine(Roll(rb, speed, duration, animator));
+    }
+
+    private IEnumerator Roll(Rigidbody2D rb, float speed, float duration, Animator animator){
+        float elapsedTime = 0f;
+        Vector2 direction = (player.position - transform.position).normalized;
+        float offsetDistance = 4f;
+        Vector2 target = new Vector2(player.position.x, rb.position.y) + direction * offsetDistance;
+        while(elapsedTime < duration){
+            
+            Vector2 newPos = Vector2.MoveTowards(rb.position, target, speed * Time.fixedDeltaTime);
+            rb.MovePosition(newPos);
+            elapsedTime += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+            
+        }
+        animator.SetBool("isRolling", false);
     }
 
     public float GetDistanceToPlayer(){

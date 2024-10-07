@@ -9,7 +9,7 @@ public class BossHealthUI : MonoBehaviour
     private GameObject bossUI;
     private Slider healthBar;
     [SerializeField] private string bossName;
-    private TextMeshProUGUI bossNameText;
+    private Text bossNameText;
     void Start()
     {
         healthScript = gameObject.GetComponent<Health>();
@@ -17,7 +17,7 @@ public class BossHealthUI : MonoBehaviour
         bossUI = transform.parent.GetChild(1).gameObject;
         healthBar.maxValue = healthScript.GetMaxHealth();
         healthBar.value = healthScript.GetHealth();
-        bossNameText = transform.parent.GetChild(1).transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+        bossNameText = transform.parent.GetChild(1).transform.GetChild(1).gameObject.GetComponent<Text>();
         bossNameText.text = bossName;
 
     }
