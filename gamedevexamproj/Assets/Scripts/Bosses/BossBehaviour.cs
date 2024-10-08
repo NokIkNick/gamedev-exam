@@ -16,7 +16,12 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     [SerializeField] private float projectileOffsetX = 1f;
     [SerializeField] private float projectileOffsetY = 1f;
     [SerializeField] private Color flashColor = new Color(0.678f, 0.847f, 0.902f);
+    private Rigidbody2D m_rb;
     private bool isDead = false;
+    private bool isInitialized = false;
+    private Animator m_animator;
+    private float m_rollSpeed;
+    private float m_rollDuration;
 
     void Start()
     {
@@ -33,10 +38,20 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
 
     }
 
-    public void MoveTowardsPlayer(Rigidbody2D rb, float speed){
-        Vector2 target = new Vector2(player.position.x, rb.position.y);
-        Vector2 newPos = Vector2.MoveTowards(rb.position, target, speed * Time.fixedDeltaTime);
-        rb.MovePosition(newPos);
+    public void Initialize(Rigidbody2D rb, Animator animator, float rollSpeed, float rollDuration){
+        if(isInitialized) return;
+        
+        m_rb = rb;
+        isInitialized = true;
+        m_animator = animator;
+        m_rollSpeed = rollSpeed;
+        m_rollDuration = rollDuration;
+    }
+
+    public void MoveTowardsPlayer(float speed){
+        Vector2 target = new Vector2(player.position.x, m_rb.position.y);
+        Vector2 newPos = Vector2.MoveTowards(m_rb.position, target, speed * Time.fixedDeltaTime);
+        m_rb.MovePosition(newPos);
     }
 
     public void LookAtPlayer(){
@@ -75,11 +90,17 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     }
 
 
-    public void RollTowardsPlayer(Rigidbody2D rb, float speed, float duration, Animator animator){
-        StartCoroutine(Roll(rb, speed, duration, animator));
+    public void RollTowardsPlayer(){
+        StartCoroutine(Roll(m_rb, m_rollSpeed, m_rollDuration, m_animator));
+    }
+
+    public void StartRoll(){
+        m_animator.SetBool("isRolling", true);
     }
 
     private IEnumerator Roll(Rigidbody2D rb, float speed, float duration, Animator animator){
+        
+        Debug.Log(animator.GetBool("isRolling"));
         float elapsedTime = 0f;
         Vector2 direction = (player.position - transform.position).normalized;
         float offsetDistance = 4f;

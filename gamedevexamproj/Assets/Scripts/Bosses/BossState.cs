@@ -11,6 +11,7 @@ public class BossState : StateMachineBehaviour
     [SerializeField] private float enragedSpeed = 3.5f;
     [SerializeField] private float rollRange = 8f;
     [SerializeField] private float rollSpeed = 10f;
+    [SerializeField] private float rollDuration = 4f;
     private bool isEnraged;
 
 
@@ -18,6 +19,7 @@ public class BossState : StateMachineBehaviour
     {
         rb = animator.GetComponent<Rigidbody2D>();
         bossBehaviour = animator.GetComponent<BossBehaviour>();
+        bossBehaviour.Initialize(rb, animator, rollSpeed, rollDuration);
         isEnraged = bossBehaviour.GetIsEngraged();
 
         bossBehaviour.Flash();
@@ -32,8 +34,6 @@ public class BossState : StateMachineBehaviour
 
         if(distance >= rollRange && isEnraged && !animator.GetBool("isRolling")){
             animator.SetTrigger("Roll");
-            animator.SetBool("isRolling", true);
-            bossBehaviour.RollTowardsPlayer(rb, rollSpeed, 1, animator);
 
 
         }else if(distance >= shootRange){
@@ -45,10 +45,10 @@ public class BossState : StateMachineBehaviour
 
         }else if (distance > meleeRange && distance < shootRange){
             if (isEnraged) {
-                bossBehaviour.MoveTowardsPlayer(rb, enragedSpeed);;
+                bossBehaviour.MoveTowardsPlayer(enragedSpeed);;
 
             } else {
-                bossBehaviour.MoveTowardsPlayer(rb, speed);
+                bossBehaviour.MoveTowardsPlayer(speed);
 
             };
         }
