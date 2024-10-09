@@ -12,7 +12,9 @@ public class BossState : StateMachineBehaviour
     [SerializeField] private float rollRange = 8f;
     [SerializeField] private float rollSpeed = 10f;
     [SerializeField] private float rollDuration = 4f;
+    [SerializeField] private float rollCooldown = 5f;
     private bool isEnraged;
+    
 
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -31,9 +33,11 @@ public class BossState : StateMachineBehaviour
         float distance = bossBehaviour.GetDistanceToPlayer();
         
         bossBehaviour.LookAtPlayer();
+        bool canRoll = bossBehaviour.GetCanRoll();
 
-        if(distance >= rollRange && isEnraged && !animator.GetBool("isRolling")){
+        if(distance >= rollRange && isEnraged && !animator.GetBool("isRolling") && canRoll){
             animator.SetTrigger("Roll");
+            bossBehaviour.StartRollCooldown();
 
 
         }else if(distance >= shootRange){
@@ -72,6 +76,5 @@ public class BossState : StateMachineBehaviour
         animator.ResetTrigger("Die");
         animator.ResetTrigger("Roll");
     }
-
 
 }

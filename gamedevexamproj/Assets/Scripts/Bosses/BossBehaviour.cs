@@ -22,6 +22,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     private Animator m_animator;
     private float m_rollSpeed;
     private float m_rollDuration;
+    private bool canRool = true;
 
     void Start()
     {
@@ -169,5 +170,22 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
 
     public void ResetColor(){
         GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    public bool GetCanRoll(){
+        return canRool;
+    }
+
+    public void SetCanRoll(bool canRool){
+        this.canRool = canRool;
+    }
+
+    public void StartRollCooldown(){
+        StartCoroutine(RollCooldown());
+    }
+
+    private IEnumerator RollCooldown(){
+        yield return new WaitForSeconds(5f);
+        canRool = true;
     }
 }
