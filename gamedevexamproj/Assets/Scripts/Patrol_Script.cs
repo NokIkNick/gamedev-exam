@@ -9,11 +9,9 @@ public class Patrol_Script : MonoBehaviour
     private bool movingRight = false;
     private bool isChasing = false;
     public GameObject player;
-    public Transform groundDetect;
-    public Transform wallDetect;
-    public Transform playerDetect;
     public LayerMask groundLayer;
     public LayerMask playerLayer;
+    [SerializeField] private float chasingDistance = 5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,8 +22,18 @@ public class Patrol_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        DetectPlayer();
+
         if (isChasing)
         {
+            
+            float distance = Vector2.Distance(player.transform.position, transform.position);
+            if(distance > chasingDistance){
+                isChasing = false;
+                Debug.Log("I am no longer chasing");
+            }
+
             Chase();
         }
         else 
@@ -33,49 +41,60 @@ public class Patrol_Script : MonoBehaviour
             Patrol();
         }
         
+        
 
+    }
+
+    //Nicklas ændring: Genbrugelig metode til at detektere om der er jord under fjenden.
+    public bool IsDetectingGround(){
+        RaycastHit2D groundCheck = Physics2D.Raycast(transform.position, Vector2.down, rayDist,groundLayer);
+        return groundCheck.collider != null;
+    }
+
+    //Nicklas ændring: Genbrugelig metode til at detektere om der er en væg foran fjenden.
+    public bool IsDetectingWall(){
+        //Nicklas ændring: Raycasten skyder nu bare ud fra fjendens positon, i stedet for et overflødigt usynligt objekt. Har fjernet unødigt spiller check.
+        RaycastHit2D wallDetector = Physics2D.Raycast(transform.position, transform.right, wayRallDist, groundLayer);
+        return wallDetector.collider != null;
+    }
+
+    //Nicklas ændring: Metode til at detektere spilleren, da det er en god idé at sepereere det fra Patrol metoden.
+    public void DetectPlayer(){
+        //Nicklas ændring: Raycasten skyder nu bare ud fra fjendens positon, i stedet for et overflødigt usynligt objekt. Har fjernet unødigt spiller check.
+        RaycastHit2D playerDetector = Physics2D.Raycast(transform.position, transform.right, playDetecDist, playerLayer);
+        
+        if(playerDetector.collider == true && isChasing == false && playerDetector.collider.tag == "Player"){
+            isChasing = true;
+            player = playerDetector.collider.gameObject;
+        }
     }
     public void Patrol()
     {
         transform.Translate(Vector2.right * speed * Time.deltaTime);
-        RaycastHit2D groundCheck = Physics2D.Raycast(groundDetect.position, Vector2.down, rayDist,groundLayer);
-        RaycastHit2D wallDetector = Physics2D.Raycast(wallDetect.position, transform.right, wayRallDist,groundLayer);
-        RaycastHit2D playerDetector = Physics2D.Raycast(wallDetect.position, transform.right, playDetecDist,playerLayer);
-        Debug.Log("here is wallDetector: " + wallDetect);
-        if (groundCheck.collider == false || wallDetector.collider == true && movingRight == true)
+
+        //Nicklas ændring: Hvis der ikke er jord under fjenden, eller der er en væg foran, så skal fjenden vende om.
+        if (IsDetectingGround() == false || IsDetectingWall() == true)
         {
-
-            Debug.Log("I have detected something that should make me turn");       
-      
-            Turnaround();
-            
-
+            Flip();
         }
-        else if (groundCheck.collider == false || wallDetector.collider == true && movingRight == false)
-        {
-            
-            Turnaround();
-             
 
-        }
-        /*else if (wallDetector.collider != false) 
-        {
-            Turnaround();
-        }*/
-
-        
 
     }
 
     public void Chase() 
     {
-        Vector2 direction = player.transform.position;
+        Debug.Log("I am chasing");
+
+        //Nicklas ændring: Retningen er nu fra player til enemy, da der tidligere kun blev tjekket på spillerens position.
+        Vector2 direction = player.transform.position - transform.position;
         direction.Normalize();
-        transform.Translate(direction*speed*Time.deltaTime);
-        RaycastHit2D groundCheck = Physics2D.Raycast(groundDetect.position, Vector2.down, rayDist, groundLayer);
-        RaycastHit2D wallDetector = Physics2D.Raycast(wallDetect.position, transform.right, wayRallDist, groundLayer);
+        transform.Translate(direction * speed * Time.deltaTime);
+
+
     }
     
+
+    //Gammel metode til at vende fjenden:
     public void Turnaround()
     {
         Debug.Log("i am inside turn around");
@@ -93,5 +112,24 @@ public class Patrol_Script : MonoBehaviour
             Debug.Log("I should be moving right");
         }
     }
+
+
+    //Nicklas ændring: Ny flip metode, der også roterer fjenden, så den vender rigtigt.
+    public void Flip(){
+        Vector3 flipped = transform.localScale;
+        flipped.z *= -1f;
+
+        if(movingRight){
+            transform.localScale = flipped;
+            transform.Rotate(0f, 180f, 0f);
+            
+        }else if(!movingRight){
+            transform.localScale = flipped;
+            transform.Rotate(0f, -180f, 0f);
+        }
+        movingRight = !movingRight;
+    }
+
+
 }
 

@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1282135586328042589}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.1499999, y: 0.25, z: -0.04475488}
+  m_LocalPosition: {x: 0.64, y: 0.04, z: -0.04475488}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -274,14 +274,12 @@ MonoBehaviour:
   speed: 1
   rayDist: 2
   wayRallDist: 1
-  playDetecDist: 2
+  playDetecDist: 4
   player: {fileID: 0}
-  groundDetect: {fileID: 6351834743863602647}
-  wallDetect: {fileID: 3331443188981164578}
-  playerDetect: {fileID: 2954397129904353962}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   playerLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 128
+  chasingDistance: 7
