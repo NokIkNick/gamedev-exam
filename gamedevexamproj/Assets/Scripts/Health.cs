@@ -47,12 +47,17 @@ public class Health : MonoBehaviour
     }
 
     public void Die(){
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     public void Invincibility(){
         isDamagable = false;
         Invoke("ResetInvincibility", 1.5f);
+    }
+
+    public void Invincibility(float duration){
+        isDamagable = false;
+        Invoke("ResetInvincibility", duration);
     }
 
     private void ResetInvincibility(){

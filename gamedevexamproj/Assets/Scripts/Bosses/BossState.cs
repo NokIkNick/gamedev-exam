@@ -12,7 +12,7 @@ public class BossState : StateMachineBehaviour
     [SerializeField] private float rollRange = 8f;
     [SerializeField] private float rollSpeed = 10f;
     [SerializeField] private float rollDuration = 4f;
-    [SerializeField] private float rollCooldown = 5f;
+    [SerializeField] private float rollCooldown = 8f;
     private bool isEnraged;
     
 

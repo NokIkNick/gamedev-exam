@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossBehaviour : MonoBehaviour, IBossBehaviour
@@ -23,17 +24,19 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     private float m_rollSpeed;
     private float m_rollDuration;
     private bool canRool = true;
+    private Health healthscript;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        healthscript = GetComponent<Health>();
     }
 
     void Update()
     {
         if(isDead){
             if(GetDistanceToPlayer() > 15){
-                Destroy(gameObject);
+                gameObject.SetActive(false);
             }
         }
 
@@ -97,6 +100,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
 
     public void StartRoll(){
         m_animator.SetBool("isRolling", true);
+        healthscript.Invincibility(m_rollDuration);
     }
 
     private IEnumerator Roll(Rigidbody2D rb, float speed, float duration, Animator animator){
@@ -106,6 +110,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         Vector2 direction = (player.position - transform.position).normalized;
         float offsetDistance = 4f;
         Vector2 target = new Vector2(player.position.x, rb.position.y) + direction * offsetDistance;
+        StartCoroutine(RotateBossContinuously(animator, rb, speed));
         while(elapsedTime < duration){
             
             Vector2 newPos = Vector2.MoveTowards(rb.position, target, speed * Time.fixedDeltaTime);
@@ -115,6 +120,16 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
             
         }
         animator.SetBool("isRolling", false);
+    }
+
+    private IEnumerator RotateBossContinuously(Animator animator, Rigidbody2D rb, float speed)
+    {
+        while (animator.GetBool("isRolling"))
+        {
+            rb.rotation += speed * Time.fixedDeltaTime * 360; // Rotate continuously
+            yield return new WaitForFixedUpdate();
+        }
+        rb.rotation = 0;
     }
 
     public float GetDistanceToPlayer(){
@@ -187,5 +202,11 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     private IEnumerator RollCooldown(){
         yield return new WaitForSeconds(5f);
         canRool = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision){
+        if(collision.gameObject.tag == "Player" && m_animator.GetBool("isRolling")){
+            collision.gameObject.GetComponent<Health>().TakeDamage(attackDamage);
+        }
     }
 }
