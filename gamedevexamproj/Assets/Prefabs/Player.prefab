@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &436024624273473209
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 235968699847989905}
+  m_Layer: 0
+  m_Name: WallCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &235968699847989905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436024624273473209}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.16, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8008808918955616193}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &549987593950647089
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 549987593950647089}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.007, y: 0.402, z: 0}
+  m_LocalPosition: {x: 0.04, y: 0.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -185,6 +216,7 @@ GameObject:
   - component: {fileID: 758854773283207552}
   - component: {fileID: 5529486973897641035}
   - component: {fileID: 4135305243348112939}
+  - component: {fileID: 7341357123627156258}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -208,6 +240,7 @@ Transform:
   - {fileID: 1168110013817693665}
   - {fileID: 4569005052285974210}
   - {fileID: 9138529737308184649}
+  - {fileID: 235968699847989905}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2563673418598043349
@@ -401,17 +434,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f447993975c97194e958aaf14ec98f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coyoteTime: 0.1
   m_JumpForce: 1000
   m_doubleJumpForce: 1000
   m_CrouchSpeed: 0.36
   m_MovementSmoothing: 0.05
   m_AirControl: 1
+  wallHangDuration: 2
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 39
   m_GroundCheck: {fileID: 1168110013817693665}
   m_CeilingCheck: {fileID: 4569005052285974210}
   m_CrouchDisableCollider: {fileID: 401335256405583103}
+  m_WhatIsWall:
+    serializedVersion: 2
+    m_Bits: 8
+  m_WallCheck: {fileID: 235968699847989905}
+  m_DashSpeed: 150
+  m_DashDuration: 0.2
+  m_DashCooldown: 1
   maxJumpCount: 2
   OnLandEvent:
     m_PersistentCalls:
@@ -571,11 +613,49 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 27213f1b-bb40-4cb7-afbb-713de220db50
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 758854773283207552}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Dash
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f2b491d6-b781-48c1-a07d-75e9ab45889a
+    m_ActionName: 'Player/Dash[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!95 &7341357123627156258
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477470246009592664}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1a7135fe7c773f1479fd647a933b002b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4932677007737897939
 GameObject:
   m_ObjectHideFlags: 0

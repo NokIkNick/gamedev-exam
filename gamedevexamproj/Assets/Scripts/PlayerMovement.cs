@@ -10,10 +10,17 @@ public class PlayerMovement : MonoBehaviour
     private bool jump = false;
     private bool crouch = false;
     private Vector2 movementInput;
+
+    private Animator animator;
+
+    void Start(){
+        animator = GetComponent<Animator>();
+    }
+
   
     public void Move(InputAction.CallbackContext context)
     {
-        Debug.Log("Im moving" + context.ReadValue<Vector2>());
+        //Debug.Log("Im moving" + context.ReadValue<Vector2>());
         if(context.ReadValue<Vector2>().x > 0)
         {
             horizontalMove = runSpeed;
@@ -30,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void Jump(InputAction.CallbackContext context)
     {
-        Debug.Log("Jump");
+        //Debug.Log("Jump");
         if(context.performed)
         {
             jump = true;
@@ -39,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Crouch(InputAction.CallbackContext context)
     {   
-        Debug.Log("Im Crouching");
+        //Debug.Log("Im Crouching");
         if(context.performed)
         {
             crouch = true;
@@ -49,26 +56,16 @@ public class PlayerMovement : MonoBehaviour
             crouch = false;
         }
     }
-    // get input from our player
-   // void Update(){
-    //    horizontalMove = Input.GetAxisRaw("Horizontal")*runSpeed;
-     //   if(Input.GetButtonDown("Jump")){
-     //       jump = true;
-     //   }
-      //  if(Input.GetButtonDown("Crouch")){
-     //       crouch = true;
-      //  }else if(Input.GetButtonUp("Crouch")){
-     //       crouch = false;
-     //   }
-
-// }
     void FixedUpdate(){
         // move our character
-        //controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
-        //jump = false;
         float horizontalMove = (movementInput.x * runSpeed * Time.fixedDeltaTime);
-       // Debug.Log("Horizontal Move: " + horizontalMove);
         controller.Move(horizontalMove, crouch, jump);
+
+
+        // Update Animator
+        animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
+        animator.SetBool("IsJumping", !controller.IsGrounded());
+        animator.SetBool("IsFalling", controller.IsFalling());
         // Reset jump after it's used
         jump = false;
 
