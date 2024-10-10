@@ -4,16 +4,19 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - ground
+  - Ground
+  - Wall
+  - Background
+  - Boss
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ground
+  - 
   - Water
   - UI
-  - Wall
-  - player
+  - Player
+  - Ground
   - 
   - 
   - 
