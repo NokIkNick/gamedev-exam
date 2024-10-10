@@ -1,14 +1,20 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Health : MonoBehaviour
 {   
     [SerializeField] int maxHealth = 3;
     [SerializeField] int health = 3;
     [SerializeField] bool isDamagable = true;
+    private AudioSource audioSource;
+    private AudioClip hurtSound;
 
     void Start()
     {
         health = maxHealth;
+        audioSource = GetComponent<AudioSource>();
+        hurtSound = Resources.Load<AudioClip>("Sounds/hurtSound");
+        Debug.Log(hurtSound);
     }
 
     // Update is called once per frame
@@ -17,11 +23,25 @@ public class Health : MonoBehaviour
         
     }
 
+    public void Heal(int amount){
+        if(health + amount > maxHealth){
+            health = maxHealth;
+        }
+        else{
+            health += amount;
+        }
+    }
+
+    private void PlayHurtSound(){
+        audioSource.PlayOneShot(hurtSound);
+    }
 
     public void TakeDamage(int damage){
         if(!isDamagable){
             return;
         }
+
+        PlayHurtSound();
 
         if(health > 0 && health - damage > 0 && isDamagable){
             health -= damage;

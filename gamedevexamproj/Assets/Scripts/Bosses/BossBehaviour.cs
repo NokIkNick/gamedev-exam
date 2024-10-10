@@ -93,6 +93,7 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         }
     }
 
+    
 
     public void RollTowardsPlayer(){
         StartCoroutine(Roll(m_rb, m_rollSpeed, m_rollDuration, m_animator));
@@ -178,7 +179,11 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
         Gizmos.DrawWireSphere(pos, attackRange);
     }
 
-    public void Flash(){
+    public void AttackWarning(){
+        Flash();
+    }
+
+    private void Flash(){
         GetComponent<SpriteRenderer>().color = flashColor;
         Invoke("ResetColor", 0.2f);
     }
@@ -205,6 +210,10 @@ public class BossBehaviour : MonoBehaviour, IBossBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
+        if(!m_animator.GetBool("isRolling") || m_animator == null){
+            return;
+        }
+
         if(collision.gameObject.tag == "Player" && m_animator.GetBool("isRolling")){
             collision.gameObject.GetComponent<Health>().TakeDamage(attackDamage);
         }

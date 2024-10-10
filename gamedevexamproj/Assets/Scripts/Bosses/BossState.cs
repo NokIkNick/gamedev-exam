@@ -23,8 +23,6 @@ public class BossState : StateMachineBehaviour
         bossBehaviour = animator.GetComponent<BossBehaviour>();
         bossBehaviour.Initialize(rb, animator, rollSpeed, rollDuration);
         isEnraged = bossBehaviour.GetIsEngraged();
-
-        bossBehaviour.Flash();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
