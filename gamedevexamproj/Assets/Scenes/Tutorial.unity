@@ -170,6 +170,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tutorial
       objectReference: {fileID: 0}
+    - target: {fileID: 5330088404580587711, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
+      propertyPath: 'conditions.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5330088404580587711, guid: 9525c5255de5d9348abde9c0065de2ef, type: 3}
+      propertyPath: 'conditions.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
