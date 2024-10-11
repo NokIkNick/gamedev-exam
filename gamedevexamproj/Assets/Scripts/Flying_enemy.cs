@@ -10,10 +10,14 @@ public class Enemy : MonoBehaviour
     public float chaseSpeed = 200f;
     public float jumpForce = 3f;
     public LayerMask groundlayer;
+    public LayerMask playerLayer;
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool shouldJump;
     private float timeSinceLastJump = 0f;
+    [SerializeField] private Transform weapon;
+    [SerializeField] private float attackRange = 0.15f;
+    [SerializeField] private int damageAmount = 3;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,6 +33,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("state of grounded: "+isGrounded);
         if (isGrounded)
         {
+
             //Debug.Log("I am grounded");
             rb.linearVelocity = new Vector2(direction * chaseSpeed, rb.linearVelocity.y);
             RaycastHit2D groundInFront = Physics2D.Raycast(transform.position, new Vector2(direction, 0), 3f, groundlayer);
@@ -57,6 +62,20 @@ public class Enemy : MonoBehaviour
             }
 
         }
+        Vector2 weaponPosition = weapon.position;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(weaponPosition, attackRange, playerLayer);
+        foreach (Collider2D hit in hits)
+        {
+            Health healthScript = hit.GetComponent<Health>();
+            if (healthScript != null)
+            {
+                healthScript.TakeDamage(damageAmount);
+            }
+            String hitName = hit.name;
+            Vector2 knockbackDirection = (transform.position - hit.transform.position.normalized);
+            rb.AddForce(knockbackDirection * -55f);
+            Debug.Log("Hit: " + hitName);
+        }
 
     }
     private void MakeEnemyJump() 
@@ -79,5 +98,10 @@ public class Enemy : MonoBehaviour
     {
         MakeEnemyJump();
         
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(weapon.position, attackRange);
     }
 }

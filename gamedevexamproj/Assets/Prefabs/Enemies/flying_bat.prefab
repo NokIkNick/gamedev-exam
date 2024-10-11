@@ -183,7 +183,7 @@ MonoBehaviour:
   jumpForce: 3
   groundlayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
 --- !u!82 &5432232185755660622
 AudioSource:
   m_ObjectHideFlags: 0
