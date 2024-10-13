@@ -21,6 +21,10 @@ public class ConditionalDoor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(conditions.Length == 0){
+            return;
+        }
+        
         if(CheckConditions() && !isOpen){
             isOpen = true;
         }
