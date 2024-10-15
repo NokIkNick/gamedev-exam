@@ -9,7 +9,7 @@ public class PlayerWeaponScript : MonoBehaviour {
     [SerializeField] private Transform weapon;
     [SerializeField] private float attackRange = 0.25f;
     [SerializeField] private LayerMask attackLayer; 
-    [SerializeField] private float damageAmount = 10f;
+    [SerializeField] private int damageAmount = 1;
     [SerializeField] float attackDuration = 0.2f;
     [SerializeField] float swingAngle = 45f;
     [SerializeField] private float rotationOffset = 90f;
@@ -21,7 +21,7 @@ public class PlayerWeaponScript : MonoBehaviour {
     [SerializeField] private AudioSource AttackAudioSource;
     [SerializeField] private AudioClip attackSound;
     [SerializeField] private AudioClip hitSound;
-  
+
     private bool canAttack = true;
     private Vector3 mousePosition;
     HashSet<Collider2D> uniqueHits = new HashSet<Collider2D>();
@@ -54,16 +54,18 @@ public class PlayerWeaponScript : MonoBehaviour {
 
             foreach (Collider2D hit in hits) {
                 if (uniqueHits.Add(hit)) {
-                    ProcessHit(hit, hitAreaPosition);
+                    ProcessHit(hit, hitAreaPosition, hit.GetComponent<Rigidbody2D>());
                 }
             }
         }
     }
-     private void ProcessHit(Collider2D hit, Vector2 hitAreaPosition) {
-        //Health healthScript = hit.GetComponent<Health>();
-        //if (healthScript != null) {
-        //    healthScript.TakeDamage(damageAmount);
-        //}
+     private void ProcessHit(Collider2D hit, Vector2 hitAreaPosition, Rigidbody2D hitRigidbody) {
+        Health healthScript = hit.GetComponent<Health>();
+        if (healthScript != null) {
+            healthScript.TakeDamage(damageAmount);
+            Vector2 direction = (hit.transform.position - player.position).normalized;
+            hitRigidbody.AddForce(new Vector2(direction.x * -1f, direction.y) * -5f, ForceMode2D.Impulse);
+        }
         AttackAudioSource.PlayOneShot(hitSound);
         GameObject hitAnimInstance = hitEffectPool.GetPooledObject();
         Vector2 hitPosition = (hitAreaPosition + (Vector2)hit.transform.position) / 2f;
