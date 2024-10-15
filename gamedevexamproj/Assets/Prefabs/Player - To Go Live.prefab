@@ -573,7 +573,7 @@ MonoBehaviour:
   wallJumpForce: 5
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 111
+    m_Bits: 103
   groundCheck: {fileID: 8538424207506135668}
   headCheck: {fileID: 254141652238705154}
   dashParticles: {fileID: 0}
@@ -654,7 +654,7 @@ MonoBehaviour:
   hangDuration: 2
   whatIsWall:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
   wallJumpCooldown: 0.5
   wallCheckDistance: 0.3
   wallHangDisableTime: 0.1
@@ -713,7 +713,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
   m_Resource: {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
