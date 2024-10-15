@@ -22,7 +22,7 @@ public class WallHangScript : MonoBehaviour
     private MovementController movementController;                
 
     private void Awake() {
-         playerBody = GetComponent<Rigidbody2D>();
+        playerBody = GetComponent<Rigidbody2D>();
         if (playerBody == null) {
             Debug.LogError("Rigidbody2D component not found! Make sure the GameObject has a Rigidbody2D component attached.");
         }
@@ -39,7 +39,6 @@ public class WallHangScript : MonoBehaviour
                 wallJumpTimer = 0f;
             }
         }
-
         if (isHanging) {
             HandleHanging();
         }
@@ -49,7 +48,6 @@ public class WallHangScript : MonoBehaviour
     }
 
     private void CheckForWallHang() {
-        //Debug.Log("CheckForWallHang");
         RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, wallCheckDistance, whatIsWall);
         RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, wallCheckDistance, whatIsWall);
         isTouchingWallLeft = hitLeft.collider != null;
@@ -71,7 +69,7 @@ public class WallHangScript : MonoBehaviour
 
     private void HandleHanging() {
         hangTimer -= Time.deltaTime;
-          if (Input.GetAxisRaw("Horizontal") > 0 && !generalMovement.GetIsFacingRight()) {
+            if (Input.GetAxisRaw("Horizontal") > 0 && !generalMovement.GetIsFacingRight()) {
             generalMovement.Flip();
         }
         else if (Input.GetAxisRaw("Horizontal") < 0 && generalMovement.GetIsFacingRight()) {
@@ -82,11 +80,9 @@ public class WallHangScript : MonoBehaviour
         }
     } 
      public void JumpFromWall(Rigidbody2D rb, float jumpForce, float horizontalForce) {
-        StopHanging();  // Disable wall-hang when jumping
-        // Apply jump force away from the wall
-        float jumpDirection =  generalMovement.GetIsFacingRight() ? 1 : -1;  // If moving right, jump left (and vice versa)
+        StopHanging();  
+        float jumpDirection =  generalMovement.GetIsFacingRight() ? 1 : -1;
         rb.AddForce(new Vector2(jumpDirection * horizontalForce, jumpForce),ForceMode2D.Impulse);
-        // Disable wall-hang temporarily after jump
         canWallHang = false;
         wallJumpTimer = 0f;
         movementController.SetHorizontalMove(0f);
@@ -95,12 +91,12 @@ public class WallHangScript : MonoBehaviour
         yield return new WaitForSeconds(timeoutDuration);
         canWallHang = true;  
     } 
-    public void StopHanging(){
+    public void StopHanging() {
         movementController.SetHorizontalMove(0f);
         playerBody.gravityScale = originalGravity;
         float pushForce = 5f;
-        Vector2 pushDirection = playerBody.transform.right * (generalMovement.GetIsFacingRight() ? 1 : -1); // Determine the direction to push
-        playerBody.AddForce(pushDirection * pushForce, ForceMode2D.Impulse); // Apply the push force
+        Vector2 pushDirection = playerBody.transform.right * (generalMovement.GetIsFacingRight() ? 1 : -1);
+        playerBody.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
         lastHangTime = Time.time;
         isHanging = false;
     }

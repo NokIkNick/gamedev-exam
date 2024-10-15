@@ -19,7 +19,7 @@ public class MovementController : MonoBehaviour
   	[SerializeField] private float playerJumpForce = 25f;
   	[SerializeField] private float playerdoubleJumpForce = 25f;
 	[SerializeField] private bool playerAirControl = true;
-    [SerializeField] private int maxJumpCount = 2;
+    [SerializeField] private int maxJumpCount = 1;
 
     /////////////////////////////////////////////////////////////
     
@@ -34,8 +34,9 @@ public class MovementController : MonoBehaviour
     ///////////////Dash Variables//////////////////////////////
     [Header("Dash Settings")]
     [SerializeField] private float m_DashSpeed = 500f; 
-    [SerializeField] private float m_DashDuration = 0.2f;
+    [SerializeField] private float m_DashDuration = 0.3f;
     [SerializeField] private float m_DashCooldown = 1.0f;
+
     /////////////////////////////////////////////////////////////
     
     ///////////////Wall Hang Variables///////////////////////////
@@ -50,9 +51,15 @@ public class MovementController : MonoBehaviour
     [SerializeField] private Transform headCheck;
     ////////////////////////////////////////////////////////////
  
-    ///////////////Particle Systems////////////////////////////////////////
+    ///////////////Particle Systems//////////////////////////////
     [Header("Particle Systems")]
     [SerializeField] private ParticleSystem dashParticles;
+    ////////////////////////////////////////////////////////////
+    
+    /////////////Audio Scource//////////////////////////////////
+    [Header("Audio Scource")]
+    [SerializeField] private AudioSource walkingAudioSource;
+    [SerializeField] private AudioSource actionAudioSource;
     ////////////////////////////////////////////////////////////
     
     /////////////Script Imports/////////////////////////////////
@@ -63,7 +70,7 @@ public class MovementController : MonoBehaviour
     [SerializeField]private DashScript dash;
     [SerializeField]private WallHangScript wallHang;
     ////////////////////////////////////////////////////////////
-    					
+    			
 
     private Animator animator;
 
@@ -79,31 +86,21 @@ public class MovementController : MonoBehaviour
                 Debug.LogError("Rigidbody2D component not found! Make sure the GameObject has a Rigidbody2D component attached.");
             }
     } 
-    void Update(){
-
-    }
     public void Move(InputAction.CallbackContext context) {
         if(wallHang.GetIsWallHanging()) {
             return;
         }
-        //float speed = crouch.GetIsCrouching() ? crouchSpeed : runSpeed;
-        //movementInput = context.ReadValue<Vector2>();
-        //horizontalMove = movementInput.x * speed * Time.fixedDeltaTime;
-        if (context.started) {  // When the movement button is pressed or held down
-            movementInput = context.ReadValue<Vector2>();  // Store the movement input
-        }
-
-        if (context.canceled) {  // When the movement button is released
-            movementInput = Vector2.zero;  // Reset the movement input when released
+        movementInput = context.ReadValue<Vector2>();  
+        if (context.canceled) {
+            movementInput = Vector2.zero;
         }
     }
     public void Jump(InputAction.CallbackContext context) {
        if (context.performed) {
             if (!crouch.GetIsCrouching() && !wallHang.GetIsWallHanging()) {
-                jump.Jump(playerBody, playerJumpForce, playerdoubleJumpForce, maxJumpCount);
+                jump.Jump(playerBody, playerJumpForce, playerdoubleJumpForce, maxJumpCount, actionAudioSource);
             }
             else if (context.performed && wallHang.GetIsWallHanging()) {
-                // Perform wall-jump with added horizontal force
                 wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce);
             }
         }
@@ -122,7 +119,7 @@ public class MovementController : MonoBehaviour
     }
     public void Dash(InputAction.CallbackContext context) {
         if (context.performed) {
-            dash.Dash(generalMovement.GetIsFacingRight(), m_DashSpeed, m_DashDuration, m_DashCooldown, dashParticles);
+            dash.Dash(generalMovement.GetIsFacingRight(), m_DashSpeed, m_DashDuration, m_DashCooldown, dashParticles, actionAudioSource);
         }
     }
      void FixedUpdate(){
@@ -139,6 +136,7 @@ public class MovementController : MonoBehaviour
             horizontalMove = 0;
             playerBody.linearVelocity = new Vector2(0, playerBody.linearVelocity.y);
         }
+        jump.GroundCheck(whatIsGround, groundCheck);
         jump.ManageCoytoeTime(coyoteTime);
         if (crouch.GetIsCrouching()) {
             if (!crouch.IsObstacleAbove() && !crouchButtonPressed) {
@@ -147,11 +145,16 @@ public class MovementController : MonoBehaviour
                 crouch.StartCrouch();
             }
         }
+        if (jump.IsGrounded() && Mathf.Abs(horizontalMove) > 0 && !walkingAudioSource.isPlaying) {
+            walkingAudioSource.Play();
+        }else if (!jump.IsGrounded() || Mathf.Abs(horizontalMove) == 0 && walkingAudioSource.isPlaying) {
+            walkingAudioSource.Stop();
+        }
         animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
         animator.SetBool("IsJumping", !jump.IsGrounded());
         //animator.SetBool("IsCrouching", crouch.GetIsCrouching());
         animator.SetBool("IsFalling", generalMovement.IsFalling(playerBody));
-        jump.GroundCheck(whatIsGround, groundCheck);
+        //animator.SetBool("isDashing", dash.getIsDashing());
     }
     public void SetHorizontalMove(float move) {
         horizontalMove = move;

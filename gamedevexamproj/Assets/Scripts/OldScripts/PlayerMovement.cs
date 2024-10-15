@@ -18,9 +18,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
   
-    public void Move(InputAction.CallbackContext context)
-    {
-        //Debug.Log("Im moving" + context.ReadValue<Vector2>());
+    public void Move(InputAction.CallbackContext context) {
         if(context.ReadValue<Vector2>().x > 0)
         {
             horizontalMove = runSpeed;
