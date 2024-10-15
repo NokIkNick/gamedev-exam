@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 8612602707520075129}
   - component: {fileID: 5432232185755660622}
   - component: {fileID: 6144735985192573030}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: flying_bat
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -155,7 +155,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -166,7 +166,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &8612602707520075129
 MonoBehaviour:
   m_ObjectHideFlags: 0

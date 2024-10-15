@@ -15,7 +15,7 @@ public class Patrol_Script : MonoBehaviour
     public LayerMask playerLayer;
     [SerializeField] private float chasingDistance = 5f;
     private bool isflipped = false;
-    private bool canChase = true;
+    //private bool canChase = true;
     private Rigidbody2D rb;
 
     [SerializeField] private Transform weapon;
@@ -34,23 +34,18 @@ public class Patrol_Script : MonoBehaviour
 
         DetectPlayer();
 
-        if (isChasing)
-        {
+        if (isChasing){
 
             float distance = Vector2.Distance(player.transform.position, transform.position);
             if (distance > chasingDistance)
             {
                 isChasing = false;
-                Debug.Log("I am no longer chasing");
+                //Debug.Log("I am no longer chasing");
             }
-            if (canChase) 
-            {
-                Chase();
-            }
-            
-        }
-        else
-        {
+
+            Chase();
+
+        }else {
             Patrol();
         }
 
@@ -101,72 +96,66 @@ public class Patrol_Script : MonoBehaviour
 
     private IEnumerator CanChaseAgainTimer(float timeoutDuration)
     {
-        Debug.Log("I am inside CanChaseAgain");
+        //Debug.Log("I am inside CanChaseAgain");
         yield return new WaitForSeconds(timeoutDuration);
-        canChase = true;
+        //canChase = true;
     }
 
     public void Chase()
     {
+
         if (IsDetectingGround() == false || IsDetectingWall() == true)
         {
             
             isChasing = false;
-            canChase = false;
+            //canChase = false;
 
-            Debug.Log("I should stop chasing player"); 
-            CanChaseAgainTimer(3f);
+            //Debug.Log("I should stop chasing player"); 
+            //CanChaseAgainTimer(3f);
         }
-        Debug.Log("I am chasing");
+        //Debug.Log("I am chasing");
 
         //Nicklas ændring: Retningen er nu fra player til enemy, da der tidligere kun blev tjekket på spillerens position.
         
-            
-            if (isflipped)
-            {
-                Vector2 direction = player.transform.position - transform.position;
-                direction.Normalize();
-                transform.Translate(direction * speed * Time.deltaTime);
-                
-                
-            }
-            else
-            {
-                Vector2 direction = player.transform.position - transform.position;
-                direction.Normalize();
-                transform.Translate(-direction * speed * Time.deltaTime);
-                
-            }
+        Vector2 direction = player.transform.position - transform.position;
+        direction.Normalize();
+        transform.Translate(direction * speed * Time.deltaTime);
+
+
+
+        
+
+        
         Vector2 weaponPosition = weapon.position;
         
         Collider2D[] hits = Physics2D.OverlapCircleAll(weaponPosition, attackRange, playerLayer);
         foreach (Collider2D hit in hits)
         {
-             Health healthScript = hit.GetComponent<Health>();
+            Health healthScript = hit.GetComponent<Health>();
             if (healthScript != null) {
-                 healthScript.TakeDamage(damageAmount);
-             }
-            String hitName = hit.name;
-            Vector2 knockbackDirection = (transform.position-hit.transform.position.normalized);
-            rb.AddForce(knockbackDirection * -55f);
-            Debug.Log("Hit: " + hitName);
+                healthScript.TakeDamage(damageAmount);
+                String hitName = hit.name;  
+                Vector2 knockbackDirection = (transform.position-hit.transform.position).normalized;
+                rb.AddForce(new Vector2(knockbackDirection.x * -1f, knockbackDirection.y) * -5f);
+                Debug.Log("Hit: " + hitName);
+            }
         }
 
         //Debug.Log("here is your direction: "+direction);
-
+        
     }
 
 
     //Gammel metode til at vende fjenden:
     public void Turnaround()
     {
-        Debug.Log("i am inside turn around");
+        //Debug.Log("i am inside turn around");
         if (movingRight)
         {
             isflipped = true;
             transform.eulerAngles = new Vector3(0, -180, 0);
             movingRight = false;
-            Debug.Log("I should be moving left now");
+            //Debug.Log("I should be moving left now");
 
         }
         else
@@ -174,7 +163,7 @@ public class Patrol_Script : MonoBehaviour
             isflipped = false;
             transform.eulerAngles = new Vector3(0, 0, 0);
             movingRight = true;
-            Debug.Log("I should be moving right");
+            //Debug.Log("I should be moving right");
         }
     }
 
@@ -182,7 +171,7 @@ public class Patrol_Script : MonoBehaviour
     //Nicklas ændring: Ny flip metode, der også roterer fjenden, så den vender rigtigt.
     public void Flip()
     {
-        Debug.Log("I am flipping");
+        //Debug.Log("I am flipping");
         Vector3 flipped = transform.localScale;
         flipped.z *= -1f;
 
@@ -205,5 +194,17 @@ public class Patrol_Script : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(weapon.position, attackRange);
+
+
+        //draw raycasts:
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * rayDist);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * wayRallDist);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * playDetecDist);
+
     }
+
+
 }

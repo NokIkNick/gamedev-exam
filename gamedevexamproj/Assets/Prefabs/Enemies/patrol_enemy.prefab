@@ -46,9 +46,9 @@ GameObject:
   - component: {fileID: 3217036691796116487}
   - component: {fileID: 36978266937684889}
   - component: {fileID: 5243743018706742867}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: patrol_enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -197,7 +197,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &3217036691796116487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,7 +223,7 @@ MonoBehaviour:
     m_Bits: 64
   chasingDistance: 5
   weapon: {fileID: 4909224267391414835}
-  attackRange: 0.15
+  attackRange: 0.3
   damageAmount: 3
 --- !u!114 &36978266937684889
 MonoBehaviour:
