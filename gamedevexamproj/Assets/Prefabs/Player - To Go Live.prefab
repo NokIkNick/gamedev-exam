@@ -671,7 +671,7 @@ MonoBehaviour:
   hangDuration: 2
   whatIsWall:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   wallJumpCooldown: 0.5
   wallCheckDistance: 0.3
   wallHangDisableTime: 0.1
