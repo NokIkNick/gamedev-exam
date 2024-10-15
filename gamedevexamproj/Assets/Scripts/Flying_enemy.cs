@@ -73,7 +73,7 @@ public class Enemy : MonoBehaviour
             }
             String hitName = hit.name;
             Vector2 knockbackDirection = (transform.position - hit.transform.position.normalized);
-            rb.AddForce(knockbackDirection * -55f);
+            rb.AddForce(knockbackDirection * -100f);
             Debug.Log("Hit: " + hitName);
         }
 

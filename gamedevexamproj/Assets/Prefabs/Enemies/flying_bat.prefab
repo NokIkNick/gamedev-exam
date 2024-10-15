@@ -36,6 +36,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4701376343067337736}
+  - {fileID: 6601458221191802360}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4432551626810132753
@@ -183,7 +184,13 @@ MonoBehaviour:
   jumpForce: 3
   groundlayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  weapon: {fileID: 6601458221191802360}
+  attackRange: 0.7
+  damageAmount: 3
 --- !u!82 &5432232185755660622
 AudioSource:
   m_ObjectHideFlags: 0
@@ -194,8 +201,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: fc1ba04a4ef781d4b8ed150b5ee8307e, type: 3}
+  m_Resource: {fileID: 8300000, guid: fc1ba04a4ef781d4b8ed150b5ee8307e, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -296,6 +303,37 @@ MonoBehaviour:
   maxHealth: 3
   health: 3
   isDamagable: 1
+--- !u!1 &2464107668091078723
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6601458221191802360}
+  m_Layer: 0
+  m_Name: bat_attack_point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6601458221191802360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2464107668091078723}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.01, y: -0.06, z: -0.013865011}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 327739369667220158}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3200688518616341253
 PrefabInstance:
   m_ObjectHideFlags: 0
