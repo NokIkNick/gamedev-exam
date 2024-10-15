@@ -7,7 +7,7 @@ TagManager:
   - Ground
   - Wall
   - Background
-  - Climbable
+  - Boss
   layers:
   - Default
   - TransparentFX
@@ -15,8 +15,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Ground
   - 
   - 
   - 
