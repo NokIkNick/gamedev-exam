@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 3339109831550948942}
   - component: {fileID: 446300238689949841}
   - component: {fileID: 8913971679695794053}
+  - component: {fileID: 6483846268079320810}
   - component: {fileID: 7210055253410682316}
   m_Layer: 0
   m_Name: Player - To Go Live
@@ -98,7 +99,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -58257422950015923, guid: ca1b936990c2b354fb13f36f8858f297, type: 3}
   m_Color: {r: 0.9622642, g: 0.9622642, b: 0.9622642, a: 1}
   m_FlipX: 0
@@ -447,6 +448,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8913971679695794053}
+        m_TargetAssemblyTypeName: WallHangScript, Assembly-CSharp
+        m_MethodName: WallJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: e11f9171-1f4a-4adf-94dc-a5627f84a207
     m_ActionName: 'Player/Jump[/Keyboard/space]'
   - m_PersistentCalls:
@@ -573,7 +586,7 @@ MonoBehaviour:
   wallJumpForce: 5
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 103
+    m_Bits: 239
   groundCheck: {fileID: 8538424207506135668}
   headCheck: {fileID: 254141652238705154}
   dashParticles: {fileID: 0}
@@ -654,10 +667,26 @@ MonoBehaviour:
   hangDuration: 2
   whatIsWall:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   wallJumpCooldown: 0.5
   wallCheckDistance: 0.3
   wallHangDisableTime: 0.1
+--- !u!114 &6483846268079320810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044718006789398474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a780a5418b5075428f650367a82ac68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  climbSpeed: 5
+  ladderLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &7210055253410682316
 MonoBehaviour:
   m_ObjectHideFlags: 0
