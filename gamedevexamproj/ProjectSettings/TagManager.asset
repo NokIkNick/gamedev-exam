@@ -8,18 +8,17 @@ TagManager:
   - Wall
   - Background
   - Boss
-  - Enemy
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - Player
   - Ground
-  - Wall
-  - Enemy
+  - Ladder
+  - 
   - 
   - 
   - 

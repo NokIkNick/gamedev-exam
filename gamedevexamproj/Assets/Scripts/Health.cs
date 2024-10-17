@@ -49,7 +49,6 @@ public class Health : MonoBehaviour
             Invincibility();
         }else{
             if(gameObject.tag == "Boss"){
-                health -= damage;
                 return;
             }
             
