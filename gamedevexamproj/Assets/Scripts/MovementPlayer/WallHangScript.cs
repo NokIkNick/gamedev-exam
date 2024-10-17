@@ -14,12 +14,11 @@ public class WallHangScript : MonoBehaviour
     private float hangTimer = 0f;
     private float wallJumpTimer = 0f;                   
     private Rigidbody2D playerBody;
-    private float originalGravity;
     private bool isTouchingWallLeft = false;
     private bool isTouchingWallRight = false;
-    private float lastHangTime = -Mathf.Infinity;
     private GeneralMovement generalMovement; 
-    private MovementController movementController;                
+    private MovementController movementController;
+    private float originalGravityScale;  
 
     private void Awake() {
         playerBody = GetComponent<Rigidbody2D>();
@@ -31,11 +30,10 @@ public class WallHangScript : MonoBehaviour
     }
 
     private void Update() {
-        // Handle cooldown timer for wall-hang after a jump
         if (!canWallHang) {
             wallJumpTimer += Time.deltaTime;
             if (wallJumpTimer >= wallJumpCooldown) {
-                canWallHang = true;  // Reset cooldown
+                canWallHang = true;
                 wallJumpTimer = 0f;
             }
         }
@@ -61,44 +59,40 @@ public class WallHangScript : MonoBehaviour
         Debug.Log("StartHanging");
         movementController.SetHorizontalMove(0f);
         isHanging = true;
-        originalGravity = playerBody.gravityScale;
-        playerBody.gravityScale = 0;
         hangTimer = hangDuration;
-        playerBody.linearVelocity = Vector2.zero;  
+        playerBody.linearVelocity = Vector2.zero;
+        originalGravityScale = playerBody.gravityScale;
+        playerBody.gravityScale = 0;
     }
 
     private void HandleHanging() {
         hangTimer -= Time.deltaTime;
-            if (Input.GetAxisRaw("Horizontal") > 0 && !generalMovement.GetIsFacingRight()) {
+        if (Input.GetAxisRaw("Horizontal") > 0 && !generalMovement.GetIsFacingRight()) {
+            generalMovement.Flip();
+        } else if (Input.GetAxisRaw("Horizontal") < 0 && generalMovement.GetIsFacingRight()) {
             generalMovement.Flip();
         }
-        else if (Input.GetAxisRaw("Horizontal") < 0 && generalMovement.GetIsFacingRight()) {
-            generalMovement.Flip();
-        }
+        hangTimer -= Time.deltaTime;
         if (hangTimer <= 0) {
             StopHanging();
         }
     } 
      public void JumpFromWall(Rigidbody2D rb, float jumpForce, float horizontalForce) {
         StopHanging();  
-        float jumpDirection =  generalMovement.GetIsFacingRight() ? 1 : -1;
-        rb.AddForce(new Vector2(jumpDirection * horizontalForce, jumpForce),ForceMode2D.Impulse);
+        float jumpDirection = generalMovement.GetIsFacingRight() ? 1 : -1;
+        rb.AddForce(new Vector2(jumpDirection * horizontalForce, jumpForce), ForceMode2D.Impulse);
         canWallHang = false;
         wallJumpTimer = 0f;
-        movementController.SetHorizontalMove(0f);
+        movementController.SetHorizontalMove(0f); 
+        StartCoroutine(ResetHorizontalVelocityAfterWallJump());
     }
-   private IEnumerator WallCheckTimeout(float timeoutDuration) {
-        yield return new WaitForSeconds(timeoutDuration);
-        canWallHang = true;  
-    } 
-    public void StopHanging() {
-        movementController.SetHorizontalMove(0f);
-        playerBody.gravityScale = originalGravity;
-        float pushForce = 5f;
-        Vector2 pushDirection = playerBody.transform.right * (generalMovement.GetIsFacingRight() ? 1 : -1);
-        playerBody.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
-        lastHangTime = Time.time;
-        isHanging = false;
+     private IEnumerator ResetHorizontalVelocityAfterWallJump() {
+        yield return new WaitForSeconds(0.1f);
+        playerBody.linearVelocity = new Vector2(0, playerBody.linearVelocity.y);
+    }
+     public void StopHanging() {
+        isHanging = false;  
+        playerBody.gravityScale = originalGravityScale;
     }
 
     private void OnDrawGizmos() {

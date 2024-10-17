@@ -15,7 +15,7 @@ public class JumpScript : MonoBehaviour {
         OnLandEvent ??= new UnityEvent();
     }
     public void Jump(Rigidbody2D m_Rigidbody2D, float jumpForce,float m_DoubleJumpForce, int maxJumpCount, AudioSource audioSource) {
-            Debug.Log("Jump");
+            //Debug.Log("Jump");
 
           if (m_Grounded || m_CoyoteTimeCounter > 0f){
                 m_Grounded = false;
@@ -32,7 +32,7 @@ public class JumpScript : MonoBehaviour {
             }
     }
     public void WallJump(Rigidbody2D m_Rigidbody2D, float m_JumpForce) {
-        Debug.Log("Wall Jump");
+       // Debug.Log("Wall Jump");
         m_Rigidbody2D.linearVelocity = new Vector2(m_Rigidbody2D.linearVelocity.x, 0f); // Reset y velocity
         m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce),ForceMode2D.Impulse);
     }

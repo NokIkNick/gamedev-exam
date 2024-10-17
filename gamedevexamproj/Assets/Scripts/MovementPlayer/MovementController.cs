@@ -99,9 +99,11 @@ public class MovementController : MonoBehaviour
        if (context.performed) {
             if (!crouch.GetIsCrouching() && !wallHang.GetIsWallHanging()) {
                 jump.Jump(playerBody, playerJumpForce, playerdoubleJumpForce, maxJumpCount, actionAudioSource);
+                //Debug.Log("Normal Jump");
             }
             else if (context.performed && wallHang.GetIsWallHanging()) {
-                wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce);
+               wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce);
+                //Debug.Log("Wall Jump");
             }
         }
     }
@@ -115,7 +117,6 @@ public class MovementController : MonoBehaviour
             crouchButtonPressed = false;
             crouch.StopCrouch();
         }
-
     }
     public void Dash(InputAction.CallbackContext context) {
         if (context.performed) {
@@ -127,10 +128,13 @@ public class MovementController : MonoBehaviour
             if (jump.IsGrounded() || playerAirControl) {
                 float speed = crouch.GetIsCrouching() ? crouchSpeed : runSpeed;
                 horizontalMove =  movementInput.x * speed * Time.fixedDeltaTime;
-                if(wallHang.GetIsWallHanging()) {
-                    horizontalMove = 0;
-                }
                 generalMovement.MoveHori(horizontalMove, movementSmoothing, playerBody, wallHang.GetIsWallHanging());
+                /*
+                // forsøg på at stoppe en bug hvor spiller begynder at løbe af sig selv efter wallHang (virker ikke, Arbejder videre på det)
+                if (Mathf.Abs(playerBody.linearVelocity.y) <= 0.1f) {
+                   playerBody.linearVelocity = new Vector2(0, playerBody.linearVelocity.y);
+                } 
+                */  
             }
         } else {
             horizontalMove = 0;
