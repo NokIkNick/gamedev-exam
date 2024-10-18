@@ -97,6 +97,10 @@ PrefabInstance:
       propertyPath: playerWeaponScript
       value: 
       objectReference: {fileID: 5015103794724005244}
+    - target: {fileID: 8913971679695794053, guid: 30eda05c3c2bece4084137c29e0fff24, type: 3}
+      propertyPath: jumpSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 103533df622c5944e8e835d684a21bfc, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

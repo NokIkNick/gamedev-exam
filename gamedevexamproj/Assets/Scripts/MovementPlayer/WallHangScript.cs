@@ -8,6 +8,7 @@ public class WallHangScript : MonoBehaviour
     [SerializeField] private LayerMask whatIsWall;
     [SerializeField] private float wallJumpCooldown = 0.5f;
     [SerializeField] private float wallCheckDistance = 0.3f;
+    [SerializeField] private AudioClip jumpSound;
    // [SerializeField] private float wallHangDisableTime = 0.1f;
 
     private bool canWallHang = true;                  
@@ -73,8 +74,9 @@ public class WallHangScript : MonoBehaviour
             StopHanging();
         }
     } 
-     public void JumpFromWall(Rigidbody2D rb, float jumpForce, float horizontalForce) {
+     public void JumpFromWall(Rigidbody2D rb, float jumpForce, float horizontalForce,AudioSource audioSource) {
         float jumpDirection = generalMovement.GetIsFacingRight() ? 1 : -1;
+        audioSource.PlayOneShot(jumpSound);
         rb.AddForce(new Vector2(jumpDirection * horizontalForce, jumpForce), ForceMode2D.Impulse);
         playerStateManager.ChangeState(PlayerState.Jumping); 
         //playerBody.gravityScale = originalGravityScale;

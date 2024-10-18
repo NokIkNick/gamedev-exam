@@ -86,7 +86,6 @@ public class MovementController : MonoBehaviour {
         stateManager = GetComponent<PlayerStateManager>();
     }
     public void Move(InputAction.CallbackContext context) {
-        // maybe remove this if statement and just use the else statement
         if(stateManager.IsInState(PlayerState.WallHanging) || stateManager.IsInState(PlayerState.Dashing)) {
             return;
         }
@@ -98,7 +97,7 @@ public class MovementController : MonoBehaviour {
     public void Jump(InputAction.CallbackContext context) {
        if (context.performed) {
             if (stateManager.IsInState(PlayerState.WallHanging)) {
-                wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce);
+                wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce,actionAudioSource);
                 Debug.Log("wall Jump");
             } else if(stateManager.IsInState(PlayerState.Climbing)) {
                 ladderClimb.JumpFromLadder(playerJumpForce);
@@ -120,10 +119,12 @@ public class MovementController : MonoBehaviour {
         }
         else if(context.canceled) {
             crouch.StopCrouch();
-            stateManager.ChangeState(PlayerState.Idle);
         }
     }
     public void Dash(InputAction.CallbackContext context) {
+        if(stateManager.IsInState(PlayerState.WallHanging)) {
+            return;
+        }
         if (context.performed && !stateManager.IsInState(PlayerState.Dashing)) {
             dash.Dash(generalMovement.GetIsFacingRight(), m_DashSpeed, m_DashDuration, m_DashCooldown, dashParticles, actionAudioSource);
             stateManager.ChangeState(PlayerState.Dashing);
@@ -136,7 +137,7 @@ public class MovementController : MonoBehaviour {
             stateManager.ChangeState(PlayerState.WallHanging);
         } else if (ladderClimb.CanClimb()) {
             stateManager.ChangeState(PlayerState.Climbing);
-        }   
+        }  
         switch (stateManager.currentState) {
             case PlayerState.Idle:
                 HandleMovement();
@@ -146,6 +147,7 @@ public class MovementController : MonoBehaviour {
                 HandleMovement();
                 break;
             case PlayerState.Running:
+                PlayRunningSound();
                 HandleMovement();
                 CheckForFalling();
                 break;
@@ -159,13 +161,24 @@ public class MovementController : MonoBehaviour {
                 CheckForFalling();
                 break;
             case PlayerState.Crouching:
-                HandleCrouchMovement(); // remember to implement xD
+                HandleMovement();
+                if(!crouch.IsObstacleAbove() && jump.IsGrounded() && crouch.GetShouldStandUp()) {
+                    crouch.StopCrouch();
+                    stateManager.ChangeState(PlayerState.Grounded);
+                } else if (!crouch.IsObstacleAbove() && !jump.IsGrounded()) {
+                    crouch.StopCrouch();
+                    stateManager.ChangeState(PlayerState.Falling);
+                }
                 break;
             case PlayerState.WallHanging:
                 wallHang.HandleHanging();
                 break;
             case PlayerState.Dashing:
-                // Handle dashing
+                if(CheckForFalling()){
+                    // ignore for now
+                } else if (jump.IsGrounded()) {
+                    stateManager.ChangeState(PlayerState.Grounded);
+                }
                 break;
             case PlayerState.Climbing:
                 ladderClimb.HandleClimbing();
@@ -181,7 +194,8 @@ public class MovementController : MonoBehaviour {
         animator.SetBool("IsJumping", stateManager.IsInState(PlayerState.Jumping));
         //animator.SetBool("IsCrouching", crouch.GetIsCrouching());
         animator.SetBool("IsFalling", stateManager.IsInState(PlayerState.Falling));
-        Debug.Log(stateManager.currentState);
+       // Debug.Log(stateManager.currentState);
+        //Debug.Log(crouch.IsObstacleAbove());
         //Debug.Log(jump.IsGrounded());
     }
     private void HandleMovement() {
@@ -195,28 +209,30 @@ public class MovementController : MonoBehaviour {
             } else if (horizontalMove < 0 && generalMovement.GetIsFacingRight()) {
                 generalMovement.Flip(transform);
             }
-            // Update state based on movement input
             if (horizontalMove != 0 && stateManager.currentState != PlayerState.Crouching && stateManager.currentState != PlayerState.Jumping && stateManager.currentState != PlayerState.Climbing) {
                 stateManager.ChangeState(PlayerState.Running);
             } else if (horizontalMove == 0 && stateManager.currentState != PlayerState.Crouching && stateManager.currentState != PlayerState.Jumping && stateManager.currentState != PlayerState.Climbing) { 
                 stateManager.ChangeState(PlayerState.Idle);
             }
         } else {
-
             // add logic movement with no air control
             //stateManager.ChangeState(PlayerState.Falling);
         }
     }
-    private void CheckForFalling() {
+    private bool CheckForFalling() {
         if (playerBody.linearVelocity.y < 0) {
             stateManager.ChangeState(PlayerState.Falling);
+            return true;
         }
-    }
-    private void HandleCrouchMovement() {
-        // Handle crouching movement if applicable
+       return false;
     }
     public void SetHorizontalMove(float move) {
         movementInput.x = move;
         horizontalMove = move;
+    }
+    private void PlayRunningSound() {
+        if (walkingAudioSource != null && !walkingAudioSource.isPlaying) {
+            walkingAudioSource.PlayOneShot(walkingAudioSource.clip);
+        }
     }
 }
