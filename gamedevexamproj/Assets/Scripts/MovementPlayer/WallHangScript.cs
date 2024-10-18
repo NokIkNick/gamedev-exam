@@ -8,8 +8,9 @@ public class WallHangScript : MonoBehaviour
     [SerializeField] private LayerMask whatIsWall;
     [SerializeField] private float wallJumpCooldown = 0.5f;
     [SerializeField] private float wallCheckDistance = 0.3f;
-    [SerializeField] private float wallHangDisableTime = 0.1f;
-    private bool isHanging = false; 
+    [SerializeField] private AudioClip jumpSound;
+   // [SerializeField] private float wallHangDisableTime = 0.1f;
+
     private bool canWallHang = true;                  
     private float hangTimer = 0f;
     private float wallJumpTimer = 0f;                   
@@ -18,7 +19,9 @@ public class WallHangScript : MonoBehaviour
     private bool isTouchingWallRight = false;
     private GeneralMovement generalMovement; 
     private MovementController movementController;
-    private float originalGravityScale;  
+    private PlayerStateManager playerStateManager; 
+    private float originalGravityScale = 3f;
+    private Vector2 wallJumpDirection;  
 
     private void Awake() {
         playerBody = GetComponent<Rigidbody2D>();
@@ -27,6 +30,7 @@ public class WallHangScript : MonoBehaviour
         }
         generalMovement = GetComponent<GeneralMovement>();
         movementController = GetComponent<MovementController>();
+        playerStateManager = GetComponent<PlayerStateManager>();
     }
 
     private void Update() {
@@ -37,50 +41,45 @@ public class WallHangScript : MonoBehaviour
                 wallJumpTimer = 0f;
             }
         }
-        if (isHanging) {
-            HandleHanging();
-        }
-        else if (canWallHang) {
-            CheckForWallHang();
-        }
     }
 
-    private void CheckForWallHang() {
+    public bool CheckForWallHang() {
         RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, wallCheckDistance, whatIsWall);
         RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, wallCheckDistance, whatIsWall);
         isTouchingWallLeft = hitLeft.collider != null;
         isTouchingWallRight = hitRight.collider != null;
-        if ((isTouchingWallLeft || isTouchingWallRight) && !isHanging && playerBody.linearVelocity.y < 0) {
+        if ((isTouchingWallLeft || isTouchingWallRight) && canWallHang && playerBody.linearVelocity.y < 0) {
             StartHanging();
+            return true;
         }
+        return false;
     }
 
     private void StartHanging() {
-        Debug.Log("StartHanging");
         movementController.SetHorizontalMove(0f);
-        isHanging = true;
         hangTimer = hangDuration;
         playerBody.linearVelocity = Vector2.zero;
         originalGravityScale = playerBody.gravityScale;
         playerBody.gravityScale = 0;
     }
 
-    private void HandleHanging() {
+    public void HandleHanging() {
         hangTimer -= Time.deltaTime;
         if (Input.GetAxisRaw("Horizontal") > 0 && !generalMovement.GetIsFacingRight()) {
-            generalMovement.Flip();
+            generalMovement.Flip(transform);
         } else if (Input.GetAxisRaw("Horizontal") < 0 && generalMovement.GetIsFacingRight()) {
-            generalMovement.Flip();
+            generalMovement.Flip(transform);
         }
-        hangTimer -= Time.deltaTime;
         if (hangTimer <= 0) {
             StopHanging();
         }
     } 
-     public void JumpFromWall(Rigidbody2D rb, float jumpForce, float horizontalForce) {
-        StopHanging();  
+     public void JumpFromWall(Rigidbody2D rb, float jumpForce, float horizontalForce,AudioSource audioSource) {
         float jumpDirection = generalMovement.GetIsFacingRight() ? 1 : -1;
+        audioSource.PlayOneShot(jumpSound);
         rb.AddForce(new Vector2(jumpDirection * horizontalForce, jumpForce), ForceMode2D.Impulse);
+        playerStateManager.ChangeState(PlayerState.Jumping); 
+        //playerBody.gravityScale = originalGravityScale;
         canWallHang = false;
         wallJumpTimer = 0f;
         movementController.SetHorizontalMove(0f); 
@@ -90,18 +89,15 @@ public class WallHangScript : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         playerBody.linearVelocity = new Vector2(0, playerBody.linearVelocity.y);
     }
-     public void StopHanging() {
-        isHanging = false;  
+     public void StopHanging() { 
         playerBody.gravityScale = originalGravityScale;
+        playerStateManager.ChangeState(PlayerState.Falling);
     }
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, Vector2.left * wallCheckDistance);
         Gizmos.DrawRay(transform.position, Vector2.right * wallCheckDistance);
-    }
-    public bool GetIsWallHanging() {
-        return isHanging;
     }
 }
 

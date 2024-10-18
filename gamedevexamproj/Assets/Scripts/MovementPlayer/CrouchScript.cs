@@ -8,6 +8,7 @@ public class CrouchScript : MonoBehaviour {
     private Transform headCheck;
 
     private bool isCrouching = false;
+    private bool shouldStandUp = true;
 
     public void Initialize(Collider2D standingCollider,float headCheckRadius, Transform headCheck, LayerMask whatIsGround) {
         this.standingCollider = standingCollider;
@@ -18,9 +19,11 @@ public class CrouchScript : MonoBehaviour {
     public void StartCrouch() {
         isCrouching = true;
         standingCollider.enabled = false;
+        shouldStandUp = false;
     }
 
     public void StopCrouch() {
+        shouldStandUp = true;
         if (!IsObstacleAbove()) {
             isCrouching = false;
             standingCollider.enabled = true;
@@ -37,5 +40,8 @@ public class CrouchScript : MonoBehaviour {
     }
     public bool GetIsCrouching() {
         return isCrouching;
+    }
+    public bool GetShouldStandUp() {
+        return shouldStandUp;
     }
 }

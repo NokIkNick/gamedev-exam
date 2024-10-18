@@ -2,24 +2,26 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class MovementController : MonoBehaviour
-{
+public class MovementController : MonoBehaviour {
     ///////////////General Movement Variables///////////////////
     [Header("Movement Settings")]
     [SerializeField] private float horizontalMove = 0f;
     [SerializeField] private float runSpeed = 60f;
     [Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;
     private Vector2 movementInput;
-    private Rigidbody2D playerBody;  
+    private Rigidbody2D playerBody;
+
+    private Vector2 m_Velocity = Vector2.zero;
     ////////////////////////////////////////////////////////////
     
     ///////////////Jump Variables///////////////////////////////
     [Header("Jump Settings")]
-    [SerializeField] private float coyoteTime = 0.1f;
-  	[SerializeField] private float playerJumpForce = 25f;
-  	[SerializeField] private float playerdoubleJumpForce = 25f;
-	[SerializeField] private bool playerAirControl = true;
+    [SerializeField] private float playerJumpForce = 25f;
+    [SerializeField] private float playerdoubleJumpForce = 25f;
+    [SerializeField] private bool playerAirControl = true;
     [SerializeField] private int maxJumpCount = 1;
+    [SerializeField] private float coyoteTime = 0.2f;
+    [SerializeField] private float originalGravityScale = 3f;
 
     /////////////////////////////////////////////////////////////
     
@@ -69,9 +71,10 @@ public class MovementController : MonoBehaviour
     [SerializeField]private CrouchScript crouch;
     [SerializeField]private DashScript dash;
     [SerializeField]private WallHangScript wallHang;
+    [SerializeField]private LadderClimb ladderClimb;
     ////////////////////////////////////////////////////////////
     			
-
+    private PlayerStateManager stateManager;
     private Animator animator;
 
     void Start() {
@@ -79,15 +82,11 @@ public class MovementController : MonoBehaviour
         if(crouch != null) {
             crouch.Initialize(standingCollider,headCheckRadius, headCheck, whatIsGround);
         }
+        playerBody = GetComponent<Rigidbody2D>();
+        stateManager = GetComponent<PlayerStateManager>();
     }
-     void Awake() {
-            playerBody = GetComponent<Rigidbody2D>(); 
-            if (playerBody == null) {       
-                Debug.LogError("Rigidbody2D component not found! Make sure the GameObject has a Rigidbody2D component attached.");
-            }
-    } 
     public void Move(InputAction.CallbackContext context) {
-        if(wallHang.GetIsWallHanging()) {
+        if(stateManager.IsInState(PlayerState.WallHanging) || stateManager.IsInState(PlayerState.Dashing)) {
             return;
         }
         movementInput = context.ReadValue<Vector2>();  
@@ -97,70 +96,143 @@ public class MovementController : MonoBehaviour
     }
     public void Jump(InputAction.CallbackContext context) {
        if (context.performed) {
-            if (!crouch.GetIsCrouching() && !wallHang.GetIsWallHanging()) {
+            if (stateManager.IsInState(PlayerState.WallHanging)) {
+                wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce,actionAudioSource);
+                Debug.Log("wall Jump");
+            } else if(stateManager.IsInState(PlayerState.Climbing)) {
+                ladderClimb.JumpFromLadder(playerJumpForce);
+                stateManager.ChangeState(PlayerState.Jumping);
+                Debug.Log("ladder Jump");
+
+            } else if (!stateManager.IsInState(PlayerState.Crouching)) {
                 jump.Jump(playerBody, playerJumpForce, playerdoubleJumpForce, maxJumpCount, actionAudioSource);
-                //Debug.Log("Normal Jump");
-            }
-            else if (context.performed && wallHang.GetIsWallHanging()) {
-               wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce);
-                //Debug.Log("Wall Jump");
+                stateManager.ChangeState(PlayerState.Jumping);
+                Debug.Log("normal Jump");
             }
         }
     }
 
     public void Crouch(InputAction.CallbackContext context) {   
         if(context.performed) {
-            crouchButtonPressed = true;
             crouch.StartCrouch();
+            stateManager.ChangeState(PlayerState.Crouching);
         }
         else if(context.canceled) {
-            crouchButtonPressed = false;
             crouch.StopCrouch();
         }
     }
     public void Dash(InputAction.CallbackContext context) {
-        if (context.performed) {
+        if(stateManager.IsInState(PlayerState.WallHanging)) {
+            return;
+        }
+        if (context.performed && !stateManager.IsInState(PlayerState.Dashing)) {
             dash.Dash(generalMovement.GetIsFacingRight(), m_DashSpeed, m_DashDuration, m_DashCooldown, dashParticles, actionAudioSource);
+            stateManager.ChangeState(PlayerState.Dashing);
         }
     }
      void FixedUpdate(){
-         if (!wallHang.GetIsWallHanging()) {
-            if (jump.IsGrounded() || playerAirControl) {
-                float speed = crouch.GetIsCrouching() ? crouchSpeed : runSpeed;
-                horizontalMove =  movementInput.x * speed * Time.fixedDeltaTime;
-                generalMovement.MoveHori(horizontalMove, movementSmoothing, playerBody, wallHang.GetIsWallHanging());
-                /*
-                // forsøg på at stoppe en bug hvor spiller begynder at løbe af sig selv efter wallHang (virker ikke, Arbejder videre på det)
-                if (Mathf.Abs(playerBody.linearVelocity.y) <= 0.1f) {
-                   playerBody.linearVelocity = new Vector2(0, playerBody.linearVelocity.y);
-                } 
-                */  
-            }
-        } else {
-            horizontalMove = 0;
-            playerBody.linearVelocity = new Vector2(0, playerBody.linearVelocity.y);
-        }
         jump.GroundCheck(whatIsGround, groundCheck);
         jump.ManageCoytoeTime(coyoteTime);
-        if (crouch.GetIsCrouching()) {
-            if (!crouch.IsObstacleAbove() && !crouchButtonPressed) {
-                crouch.StopCrouch();
-            } else if (crouch.IsObstacleAbove()) {
-                crouch.StartCrouch();
-            }
-        }
-        if (jump.IsGrounded() && Mathf.Abs(horizontalMove) > 0 && !walkingAudioSource.isPlaying) {
-            walkingAudioSource.Play();
-        }else if (!jump.IsGrounded() || Mathf.Abs(horizontalMove) == 0 && walkingAudioSource.isPlaying) {
-            walkingAudioSource.Stop();
+        if(wallHang.CheckForWallHang()) {
+            stateManager.ChangeState(PlayerState.WallHanging);
+        } else if (ladderClimb.CanClimb()) {
+            stateManager.ChangeState(PlayerState.Climbing);
+        }  
+        switch (stateManager.currentState) {
+            case PlayerState.Idle:
+                HandleMovement();
+                CheckForFalling();
+                break;
+            case PlayerState.Grounded:
+                HandleMovement();
+                break;
+            case PlayerState.Running:
+                PlayRunningSound();
+                HandleMovement();
+                CheckForFalling();
+                break;
+            case PlayerState.Jumping:
+                HandleMovement();
+                playerBody.gravityScale = originalGravityScale;
+                CheckForFalling();
+                break;
+            case PlayerState.Falling:
+                HandleMovement();
+                CheckForFalling();
+                break;
+            case PlayerState.Crouching:
+                HandleMovement();
+                if(!crouch.IsObstacleAbove() && jump.IsGrounded() && crouch.GetShouldStandUp()) {
+                    crouch.StopCrouch();
+                    stateManager.ChangeState(PlayerState.Grounded);
+                } else if (!crouch.IsObstacleAbove() && !jump.IsGrounded()) {
+                    crouch.StopCrouch();
+                    stateManager.ChangeState(PlayerState.Falling);
+                }
+                break;
+            case PlayerState.WallHanging:
+                wallHang.HandleHanging();
+                break;
+            case PlayerState.Dashing:
+                if(CheckForFalling()){
+                    // ignore for now
+                } else if (jump.IsGrounded()) {
+                    stateManager.ChangeState(PlayerState.Grounded);
+                }
+                break;
+            case PlayerState.Climbing:
+                ladderClimb.HandleClimbing();
+                HandleMovement();
+                if (!ladderClimb.CanClimb() && !jump.IsGrounded()) {
+                    stateManager.ChangeState(PlayerState.Falling);
+                } else if (!ladderClimb.CanClimb() && jump.IsGrounded()) {
+                    stateManager.ChangeState(PlayerState.Grounded);
+                }
+                break;
         }
         animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
-        animator.SetBool("IsJumping", !jump.IsGrounded());
+        animator.SetBool("IsJumping", stateManager.IsInState(PlayerState.Jumping));
         //animator.SetBool("IsCrouching", crouch.GetIsCrouching());
-        animator.SetBool("IsFalling", generalMovement.IsFalling(playerBody));
-        //animator.SetBool("isDashing", dash.getIsDashing());
+        animator.SetBool("IsFalling", stateManager.IsInState(PlayerState.Falling));
+       // Debug.Log(stateManager.currentState);
+        //Debug.Log(crouch.IsObstacleAbove());
+        //Debug.Log(jump.IsGrounded());
+    }
+    private void HandleMovement() {
+        if (jump.IsGrounded() || playerAirControl) {
+            float speed = crouch.GetIsCrouching() ? crouchSpeed : runSpeed;
+            horizontalMove = movementInput.x * speed * Time.fixedDeltaTime;
+            Vector3 targetVelocity = new Vector2(horizontalMove * 10f, playerBody.linearVelocity.y);
+            playerBody.linearVelocity = Vector2.SmoothDamp(playerBody.linearVelocity, targetVelocity, ref m_Velocity, movementSmoothing);
+            if (horizontalMove > 0 && !generalMovement.GetIsFacingRight()) {
+                generalMovement.Flip(transform);
+            } else if (horizontalMove < 0 && generalMovement.GetIsFacingRight()) {
+                generalMovement.Flip(transform);
+            }
+            if (horizontalMove != 0 && stateManager.currentState != PlayerState.Crouching && stateManager.currentState != PlayerState.Jumping && stateManager.currentState != PlayerState.Climbing) {
+                stateManager.ChangeState(PlayerState.Running);
+            } else if (horizontalMove == 0 && stateManager.currentState != PlayerState.Crouching && stateManager.currentState != PlayerState.Jumping && stateManager.currentState != PlayerState.Climbing) { 
+                stateManager.ChangeState(PlayerState.Idle);
+            }
+        } else {
+            // add logic movement with no air control
+            //stateManager.ChangeState(PlayerState.Falling);
+        }
+    }
+    private bool CheckForFalling() {
+        if (playerBody.linearVelocity.y < 0) {
+            stateManager.ChangeState(PlayerState.Falling);
+            return true;
+        }
+       return false;
     }
     public void SetHorizontalMove(float move) {
+        movementInput.x = move;
         horizontalMove = move;
+    }
+    private void PlayRunningSound() {
+        if (walkingAudioSource != null && !walkingAudioSource.isPlaying) {
+            walkingAudioSource.PlayOneShot(walkingAudioSource.clip);
+        }
     }
 }
