@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class MovementController : MonoBehaviour
-{
+public class MovementController : MonoBehaviour {
     ///////////////General Movement Variables///////////////////
     [Header("Movement Settings")]
     [SerializeField] private float horizontalMove = 0f;
@@ -72,6 +71,7 @@ public class MovementController : MonoBehaviour
     [SerializeField]private CrouchScript crouch;
     [SerializeField]private DashScript dash;
     [SerializeField]private WallHangScript wallHang;
+    [SerializeField]private LadderClimb ladderClimb;
     ////////////////////////////////////////////////////////////
     			
     private PlayerStateManager stateManager;
@@ -100,9 +100,14 @@ public class MovementController : MonoBehaviour
             if (stateManager.IsInState(PlayerState.WallHanging)) {
                 wallHang.JumpFromWall(playerBody, playerJumpForce, wallJumpForce);
                 Debug.Log("wall Jump");
-            }
-            else if (!stateManager.IsInState(PlayerState.Crouching)) {
+            } else if(stateManager.IsInState(PlayerState.Climbing)) {
+                ladderClimb.JumpFromLadder(playerJumpForce);
+                stateManager.ChangeState(PlayerState.Jumping);
+                Debug.Log("ladder Jump");
+
+            } else if (!stateManager.IsInState(PlayerState.Crouching)) {
                 jump.Jump(playerBody, playerJumpForce, playerdoubleJumpForce, maxJumpCount, actionAudioSource);
+                stateManager.ChangeState(PlayerState.Jumping);
                 Debug.Log("normal Jump");
             }
         }
@@ -129,28 +134,29 @@ public class MovementController : MonoBehaviour
         jump.ManageCoytoeTime(coyoteTime);
         if(wallHang.CheckForWallHang()) {
             stateManager.ChangeState(PlayerState.WallHanging);
+        } else if (ladderClimb.CanClimb()) {
+            stateManager.ChangeState(PlayerState.Climbing);
         }   
         switch (stateManager.currentState) {
             case PlayerState.Idle:
                 HandleMovement();
+                CheckForFalling();
                 break;
             case PlayerState.Grounded:
                 HandleMovement();
                 break;
             case PlayerState.Running:
                 HandleMovement();
+                CheckForFalling();
                 break;
             case PlayerState.Jumping:
                 HandleMovement();
                 playerBody.gravityScale = originalGravityScale;
-                if (playerBody.linearVelocity.y < 0) {
-                    stateManager.ChangeState(PlayerState.Falling);
-                }
+                CheckForFalling();
                 break;
             case PlayerState.Falling:
-                if (jump.IsGrounded()) {
-                    stateManager.ChangeState(PlayerState.Grounded);
-                }
+                HandleMovement();
+                CheckForFalling();
                 break;
             case PlayerState.Crouching:
                 HandleCrouchMovement(); // remember to implement xD
@@ -161,17 +167,20 @@ public class MovementController : MonoBehaviour
             case PlayerState.Dashing:
                 // Handle dashing
                 break;
+            case PlayerState.Climbing:
+                ladderClimb.HandleClimbing();
+                HandleMovement();
+                if (!ladderClimb.CanClimb() && !jump.IsGrounded()) {
+                    stateManager.ChangeState(PlayerState.Falling);
+                } else if (!ladderClimb.CanClimb() && jump.IsGrounded()) {
+                    stateManager.ChangeState(PlayerState.Grounded);
+                }
+                break;
         }
-        /*
-        if (playerBody.linearVelocity.y < 0) {
-            stateManager.ChangeState(PlayerState.Falling);
-        }
-        */
         animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
         animator.SetBool("IsJumping", stateManager.IsInState(PlayerState.Jumping));
         //animator.SetBool("IsCrouching", crouch.GetIsCrouching());
         animator.SetBool("IsFalling", stateManager.IsInState(PlayerState.Falling));
-        //animator.SetBool("isDashing", dash.getIsDashing());
         Debug.Log(stateManager.currentState);
         //Debug.Log(jump.IsGrounded());
     }
@@ -187,12 +196,19 @@ public class MovementController : MonoBehaviour
                 generalMovement.Flip(transform);
             }
             // Update state based on movement input
-            if (horizontalMove != 0 && stateManager.currentState != PlayerState.Crouching ) {
+            if (horizontalMove != 0 && stateManager.currentState != PlayerState.Crouching && stateManager.currentState != PlayerState.Jumping && stateManager.currentState != PlayerState.Climbing) {
                 stateManager.ChangeState(PlayerState.Running);
-            } else if (horizontalMove == 0 && stateManager.currentState != PlayerState.Crouching) {
+            } else if (horizontalMove == 0 && stateManager.currentState != PlayerState.Crouching && stateManager.currentState != PlayerState.Jumping && stateManager.currentState != PlayerState.Climbing) { 
                 stateManager.ChangeState(PlayerState.Idle);
             }
         } else {
+
+            // add logic movement with no air control
+            //stateManager.ChangeState(PlayerState.Falling);
+        }
+    }
+    private void CheckForFalling() {
+        if (playerBody.linearVelocity.y < 0) {
             stateManager.ChangeState(PlayerState.Falling);
         }
     }

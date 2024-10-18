@@ -42,6 +42,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 8318052992856369372}
     m_Modifications:
     - target: {fileID: 1258914442698032342, guid: 30eda05c3c2bece4084137c29e0fff24, type: 3}
+      propertyPath: ladderClimb
+      value: 
+      objectReference: {fileID: 7112532570915175532}
+    - target: {fileID: 1258914442698032342, guid: 30eda05c3c2bece4084137c29e0fff24, type: 3}
       propertyPath: whatIsGround.m_Bits
       value: 392
       objectReference: {fileID: 0}
@@ -116,6 +120,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3abda1c14b5d5954fbc1dd5e2d53cd54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7112532570915175532 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6483846268079320810, guid: 30eda05c3c2bece4084137c29e0fff24, type: 3}
+  m_PrefabInstance: {fileID: 4273904379328156294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2823679253513604428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a780a5418b5075428f650367a82ac68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &7759535079555630471 stripped
