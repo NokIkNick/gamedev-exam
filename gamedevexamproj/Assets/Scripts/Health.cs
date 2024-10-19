@@ -91,4 +91,8 @@ public class Health : MonoBehaviour
     public int GetMaxHealth(){
         return maxHealth;
     }
+
+    public void SetHealth(int newHealth){
+        health = newHealth;
+    }
 }
