@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4909224267391414835}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: scarapAttackpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,9 +46,9 @@ GameObject:
   - component: {fileID: 3217036691796116487}
   - component: {fileID: 36978266937684889}
   - component: {fileID: 5243743018706742867}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: patrol_enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -122,7 +122,7 @@ SpriteRenderer:
   m_Size: {x: 1.0625, y: 0.625}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &45355186696161601
@@ -348,6 +348,10 @@ PrefabInstance:
     - target: {fileID: -2253911629886400664, guid: f6005baaa61eb784c93cef1dbdfff015, type: 3}
       propertyPath: m_Name
       value: RoyalScarab
+      objectReference: {fileID: 0}
+    - target: {fileID: -2253911629886400664, guid: f6005baaa61eb784c93cef1dbdfff015, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f6005baaa61eb784c93cef1dbdfff015, type: 3}
       propertyPath: m_LocalPosition.x

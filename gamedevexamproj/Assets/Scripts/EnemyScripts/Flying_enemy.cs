@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // Update is called once per frame
@@ -70,11 +71,12 @@ public class Enemy : MonoBehaviour
             if (healthScript != null)
             {
                 healthScript.TakeDamage(damageAmount);
+                String hitName = hit.name;
+                Vector2 knockbackDirection = (transform.position - hit.transform.position).normalized;
+                rb.AddForce(new Vector2(knockbackDirection.x * -1f, knockbackDirection.y) * -5f);
+                Debug.Log("Hit: " + hitName);
             }
-            String hitName = hit.name;
-            Vector2 knockbackDirection = (transform.position - hit.transform.position.normalized);
-            rb.AddForce(knockbackDirection * -100f);
-            Debug.Log("Hit: " + hitName);
+            
         }
 
     }
