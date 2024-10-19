@@ -7,13 +7,14 @@ public class WallHangScript : MonoBehaviour
     [SerializeField] private float hangDuration = 2f;
     [SerializeField] private LayerMask whatIsWall;
     [SerializeField] private float wallJumpCooldown = 0.5f;
-    [SerializeField] private float wallCheckDistance = 0.3f;
+    //[SerializeField] private float wallHangCooldown = 1f; 
+    [SerializeField] private float wallCheckDistance = 0.5f;
     [SerializeField] private AudioClip jumpSound;
-   // [SerializeField] private float wallHangDisableTime = 0.1f;
 
     private bool canWallHang = true;                  
     private float hangTimer = 0f;
-    private float wallJumpTimer = 0f;                   
+    private float wallJumpTimer = 0f;
+    //private float wallHangTimer = 0f;                   
     private Rigidbody2D playerBody;
     private bool isTouchingWallLeft = false;
     private bool isTouchingWallRight = false;
@@ -41,9 +42,23 @@ public class WallHangScript : MonoBehaviour
                 wallJumpTimer = 0f;
             }
         }
+        /*
+        if (!canWallHang && wallHangTimer > 0) {
+            wallHangTimer -= Time.deltaTime;
+            if (wallHangTimer <= 0) {
+                canWallHang = true;  
+            }
+        }
+        */
     }
+    
 
     public bool CheckForWallHang() {
+        /*
+        if(!canWallHang) {
+            return false;
+        }
+        */
         RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, wallCheckDistance, whatIsWall);
         RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, wallCheckDistance, whatIsWall);
         isTouchingWallLeft = hitLeft.collider != null;
@@ -92,6 +107,8 @@ public class WallHangScript : MonoBehaviour
      public void StopHanging() { 
         playerBody.gravityScale = originalGravityScale;
         playerStateManager.ChangeState(PlayerState.Falling);
+        //wallHangTimer = wallHangCooldown;
+        //canWallHang = false;
     }
 
     private void OnDrawGizmos() {
