@@ -52,6 +52,11 @@ public class Health : MonoBehaviour
                 return;
             }
             
+            if(gameObject.tag == "Player"){
+                GameManager.Instance.ResetAndKillPlayer();
+                return;
+            }
+
             Flash();
             Die();
         }

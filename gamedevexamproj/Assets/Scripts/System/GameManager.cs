@@ -133,4 +133,17 @@ public class GameManager : MonoBehaviour
     public void OnApplicationQuit(){
         SavePlayerData();
     }
+
+    public void ResetToLastCheckpoint(){
+        if(playerData.lastCheckpointX != null && playerData.lastCheckpointY != null && playerData.lastCheckpointZ != null){
+            player.transform.position = new Vector3((float) playerData.lastCheckpointX, (float) playerData.lastCheckpointY, (float) playerData.lastCheckpointZ);
+            player.GetComponent<Health>().TakeDamage(1);
+        }else {
+            ResetAndKillPlayer();
+        }
+    }
+
+    public void ResetAndKillPlayer(){
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
 }
