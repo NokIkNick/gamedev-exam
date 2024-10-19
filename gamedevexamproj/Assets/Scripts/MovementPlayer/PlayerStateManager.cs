@@ -4,24 +4,22 @@ public class PlayerStateManager : MonoBehaviour {
 
     public void ChangeState(PlayerState newState) {
         if (currentState != newState) {
-            Debug.Log("State changed from " + currentState + " to " + newState);
             currentState = newState;
-            OnStateEnter(newState);
+            //OnStateEnter(newState);
         }
     }
-
-    // Optional: You can handle specific logic when entering a state
+/*
     private void OnStateEnter(PlayerState state) {
         switch (state) {
             case PlayerState.Jumping:
-                // Handle Jump Start
+                // logic for jumping state
                 break;
             case PlayerState.Climbing:
-                // Handle Climb Start
+                // logic for climbing state
                 break;
-            // Add other cases as needed
         }
     }
+*/
     public bool IsInState(PlayerState state) {
         return currentState == state;
     }
