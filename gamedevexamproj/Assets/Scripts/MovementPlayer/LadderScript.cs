@@ -45,7 +45,7 @@ public class LadderClimb : MonoBehaviour
         }
     }
 
-    private void HandleClimbing() {
+    public void HandleClimbing() {
         inputVector = playerInput.actions["Move"].ReadValue<Vector2>();
         if (inputVector.y > 0) {
             playerBody.linearVelocity = new Vector2(playerBody.linearVelocity.x, climbSpeed);
@@ -55,7 +55,15 @@ public class LadderClimb : MonoBehaviour
             playerBody.linearVelocity = new Vector2(playerBody.linearVelocity.x, 0);
         }
     }
-     private void StopClimbing() {
+
+    public void JumpFromLadder(float jumpForce) {
+        StopClimbing();
+        playerBody.AddForce(new Vector2(playerBody.linearVelocity.x, jumpForce), ForceMode2D.Impulse);
+    }
+    public bool CanClimb() {
+        return canClimb;
+    }
+    public void StopClimbing() {
         canClimb  = false;
         playerBody.gravityScale = originalGravityScale;
     }

@@ -4,9 +4,11 @@ public enum PlayerState {
     Idle,
     Running,
     Jumping,
+    Crouching,
+    Dashing,
     WallHanging,
     Climbing,
-    Crouching,
-    Falling
+    Falling,
+    Grounded
 }
 
