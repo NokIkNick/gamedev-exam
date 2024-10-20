@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 965460863545125742}
   - component: {fileID: 3371066869071164788}
   - component: {fileID: 5819797565725490976}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ConditionalDoor
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

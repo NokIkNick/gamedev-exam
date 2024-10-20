@@ -224,7 +224,9 @@ MonoBehaviour:
   chasingDistance: 5
   weapon: {fileID: 4909224267391414835}
   attackRange: 0.15
-  damageAmount: 3
+  damageAmount: 1
+  wallDetectOffset: 0
+  groundDetectOffset: 0.54
 --- !u!114 &36978266937684889
 MonoBehaviour:
   m_ObjectHideFlags: 0

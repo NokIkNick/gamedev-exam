@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get { return instance; } }
     private PlayerData playerData;
     private GameObject player;
+
+    private bool firstStart = true;
     //private ValueTuple<System.Attribute, System.Reflection.FieldInfo>[] dataFields;
 
     private void Awake(){
@@ -21,6 +23,9 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start(){
+
+        
+
         playerData = SaveSystem.LoadPlayerData();
         player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log("Player data loaded"+ playerData.gemCount);
@@ -49,12 +54,21 @@ public class GameManager : MonoBehaviour
         // Wait until the scene is fully loaded
         while (!asyncLoad.isDone)
         {
+            UIManager.Instance.ShowLoadingScreen();
             yield return null;
         }
 
         // Set the player's position after the scene has loaded
         player = GameObject.FindGameObjectWithTag("Player");
         player.transform.position = new Vector3((float) playerData.lastCheckpointX, (float) playerData.lastCheckpointY, (float) playerData.lastCheckpointZ);
+        
+        if(firstStart){
+            player.GetComponent<MovementController>().enabled = false;
+            UIManager.Instance.ShowMainMenu();
+        }else {
+            StartGame();
+        }
+        
     }
 
     /* PRØVEDE AT OPDATERE DATAEN VED HJÆLP AF REFLECTION. DET VIRKEDE IKKE...
@@ -114,6 +128,13 @@ public class GameManager : MonoBehaviour
             playerData.health = data.health;
             Debug.Log("Health updated to: " + playerData.health);
         }
+
+    }
+
+    public void StartGame(){
+        UIManager.Instance.ShowPlayerUI();
+        player.GetComponent<MovementController>().enabled = true;
+        firstStart = false;
 
     }
 

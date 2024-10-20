@@ -312,6 +312,10 @@ PrefabInstance:
       propertyPath: attackLayer.m_Bits
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 8384315855282316159, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8964954831749736880, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.45
