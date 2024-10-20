@@ -8,7 +8,8 @@ public class PlayerWeaponScript : MonoBehaviour {
     [SerializeField] private Transform weaponRotationPoint;
     [SerializeField] private Transform weapon;
     [SerializeField] private float attackRange = 0.25f;
-    [SerializeField] private LayerMask attackLayer; 
+    [SerializeField] private LayerMask attackLayer;
+    [SerializeField] private LayerMask groundAndWallLayer; 
     [SerializeField] private float damageAmount = 10f;
     [SerializeField] float attackDuration = 0.2f;
     [SerializeField] float swingAngle = 45f;
@@ -21,6 +22,7 @@ public class PlayerWeaponScript : MonoBehaviour {
     [SerializeField] private AudioSource AttackAudioSource;
     [SerializeField] private AudioClip attackSound;
     [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip wallGroundHitSound;
   
     private bool canAttack = true;
     private Vector3 mousePosition;
@@ -44,21 +46,53 @@ public class PlayerWeaponScript : MonoBehaviour {
         Debug.Log("PerformAttack");
         AttackAudioSource.PlayOneShot(attackSound);
         uniqueHits.Clear();
+        CheckAllHitAreas1();
         StartCoroutine(AttackAnimation());
-        CheckAllHitAreas();
     }
     private void CheckAllHitAreas() {
+        HashSet<Collider2D> processedHits = new HashSet<Collider2D>();
         foreach (Transform hitArea in hitAreas) {
             Vector2 hitAreaPosition = weapon.TransformPoint(hitArea.localPosition);
+            Debug.Log("Hit Area Position: " + hitAreaPosition);
             Collider2D[] hits = Physics2D.OverlapCircleAll(hitAreaPosition, attackRange, attackLayer);
-
             foreach (Collider2D hit in hits) {
-                if (uniqueHits.Add(hit)) {
-                    ProcessHit(hit, hitAreaPosition);
+                if (!processedHits.Contains(hit)) {
+                    ProcessHit(hit, hitAreaPosition); 
+                    processedHits.Add(hit); 
+                    break;  
+                }
+            }
+            Collider2D[] hitsWallGround = Physics2D.OverlapCircleAll(hitAreaPosition, attackRange, groundAndWallLayer);
+            foreach (Collider2D hit in hitsWallGround) {
+                if (!processedHits.Contains(hit)) {
+                    weaponSwingEffect.transform.position = hitAreaPosition;  
+                    weaponSwingEffect.Play();        
+                    break;
                 }
             }
         }
     }
+   private void CheckAllHitAreas1() {
+        foreach (Transform hitArea in hitAreas) {
+            Vector2 hitAreaPosition = weapon.TransformPoint(hitArea.localPosition);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(hitAreaPosition, attackRange, attackLayer);
+            foreach (Collider2D hit in hits) {
+                if (uniqueHits.Add(hit)) {
+                    ProcessHit(hit, hitAreaPosition);
+                    break;
+                }
+            }
+            if(uniqueHits.Count > 0) break; // dont want it to also hit wall/ground if it has already hit an enemy
+            Collider2D[] hitsWallGround = Physics2D.OverlapCircleAll(hitAreaPosition, attackRange, groundAndWallLayer);
+            foreach (Collider2D hit in hitsWallGround) {
+                if (uniqueHits.Add(hit)) {
+                    ProcessWallGroundHit(hit, hitAreaPosition);       
+                    break;
+                }
+            }
+        }
+    }
+
      private void ProcessHit(Collider2D hit, Vector2 hitAreaPosition) {
         //Health healthScript = hit.GetComponent<Health>();
         //if (healthScript != null) {
@@ -72,6 +106,12 @@ public class PlayerWeaponScript : MonoBehaviour {
         StartCoroutine(ReturnHitEffectToPool(hitAnimInstance));
         Debug.Log("Hit: " + hit.name);
     }
+    private void ProcessWallGroundHit(Collider2D hit,Vector2 hitAreaPosition) {
+        AttackAudioSource.PlayOneShot(wallGroundHitSound);
+        Vector2 hitPosition = (hitAreaPosition + (Vector2)hit.transform.position) / 2f;
+        weaponSwingEffect.transform.position = hitPosition;
+        weaponSwingEffect.Play();
+    }   
     private IEnumerator ReturnHitEffectToPool(GameObject hitAnimInstance) {
         float animationDuration = hitAnimInstance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
         yield return new WaitForSeconds(animationDuration);
@@ -80,7 +120,6 @@ public class PlayerWeaponScript : MonoBehaviour {
     private IEnumerator AttackAnimation() {
         TrailRenderer trail = weapon.GetComponent<TrailRenderer>();
         trail.enabled = true;
-        weaponSwingEffect.Play();
         bool isWeaponOnRight = mousePosition.x > player.position.x? true : false;
         Quaternion initialRotation, targetRotation;
 
@@ -98,6 +137,7 @@ public class PlayerWeaponScript : MonoBehaviour {
         while (elapsedTime < attackDuration) {
             elapsedTime += Time.deltaTime;
             weaponRotationPoint.rotation = Quaternion.Slerp(initialRotation, targetRotation, elapsedTime / attackDuration);
+            CheckAllHitAreas1();
             yield return null; // Wait for the next frame
         }
         yield return new WaitForSeconds(0.05f); 
@@ -110,7 +150,7 @@ public class PlayerWeaponScript : MonoBehaviour {
         }
         trail.enabled = false;
         canAttack = true;
-}
+    }
 
 
     private void OnDrawGizmosSelected() {

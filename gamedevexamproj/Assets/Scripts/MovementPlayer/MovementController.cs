@@ -193,7 +193,7 @@ public class MovementController : MonoBehaviour {
         animator.SetBool("IsJumping", stateManager.IsInState(PlayerState.Jumping));
         //animator.SetBool("IsCrouching", crouch.GetIsCrouching());
         animator.SetBool("IsFalling", stateManager.IsInState(PlayerState.Falling));
-        Debug.Log(stateManager.currentState);
+        //Debug.Log(stateManager.currentState);
         //Debug.Log(crouch.IsObstacleAbove());
         //Debug.Log(jump.IsGrounded());
     }
