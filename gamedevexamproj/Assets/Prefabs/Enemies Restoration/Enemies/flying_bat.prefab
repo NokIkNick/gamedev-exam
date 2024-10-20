@@ -190,7 +190,7 @@ MonoBehaviour:
     m_Bits: 64
   weapon: {fileID: 6601458221191802360}
   attackRange: 0.7
-  damageAmount: 3
+  damageAmount: 1
 --- !u!82 &5432232185755660622
 AudioSource:
   m_ObjectHideFlags: 0

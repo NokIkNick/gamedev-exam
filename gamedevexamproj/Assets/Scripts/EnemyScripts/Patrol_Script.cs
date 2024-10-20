@@ -21,6 +21,8 @@ public class Patrol_Script : MonoBehaviour
     [SerializeField] private Transform weapon;
     [SerializeField] private float attackRange = 0.15f;
     [SerializeField] private int damageAmount = 3;
+    [SerializeField] private float wallDetectOffset = 0.5f;
+    [SerializeField] private float groundDetectOffset = 0.5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -56,7 +58,7 @@ public class Patrol_Script : MonoBehaviour
     //Nicklas ændring: Genbrugelig metode til at detektere om der er jord under fjenden.
     public bool IsDetectingGround()
     {
-        RaycastHit2D groundCheck = Physics2D.Raycast(transform.position, Vector2.down, rayDist, groundLayer);
+        RaycastHit2D groundCheck = Physics2D.Raycast(new Vector2(transform.position.x + groundDetectOffset, transform.position.y), Vector2.down, rayDist, groundLayer);
         return groundCheck.collider != null;
     }
 
@@ -64,7 +66,7 @@ public class Patrol_Script : MonoBehaviour
     public bool IsDetectingWall()
     {
         //Nicklas ændring: Raycasten skyder nu bare ud fra fjendens positon, i stedet for et overflødigt usynligt objekt. Har fjernet unødigt spiller check.
-        RaycastHit2D wallDetector = Physics2D.Raycast(transform.position, transform.right, wayRallDist, groundLayer);
+        RaycastHit2D wallDetector = Physics2D.Raycast(new Vector2(transform.position.x + wallDetectOffset, transform.position.y), transform.right, wayRallDist, groundLayer);
         return wallDetector.collider != null;
     }
 
@@ -120,7 +122,15 @@ public class Patrol_Script : MonoBehaviour
         Vector2 direction = player.transform.position - transform.position;
         direction.Normalize();
         transform.Translate(direction * speed * Time.deltaTime);
-
+        //face player:
+        if (direction.x > 0 && isflipped)
+        {
+            Flip();
+        }
+        else if (direction.x < 0 && !isflipped)
+        {
+            Flip();
+        }
 
 
         
@@ -198,11 +208,12 @@ public class Patrol_Script : MonoBehaviour
 
         //draw raycasts:
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * rayDist);
+        Gizmos.DrawLine(new Vector2(transform.position.x + groundDetectOffset, transform.position.y), new Vector2(transform.position.x + groundDetectOffset, transform.position.y - rayDist));
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * wayRallDist);
+        Gizmos.DrawLine(new Vector2(transform.position.x + wallDetectOffset, transform.position.y), new Vector2(transform.position.x + wallDetectOffset + wayRallDist, transform.position.y));
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * playDetecDist);
+        Gizmos.DrawLine(transform.position, new Vector2(transform.position.x + playDetecDist, transform.position.y));
+
 
     }
 

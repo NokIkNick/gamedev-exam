@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get { return instance; } }
     private PlayerData playerData;
     private GameObject player;
+
+    private bool firstStart = true;
     //private ValueTuple<System.Attribute, System.Reflection.FieldInfo>[] dataFields;
 
     private void Awake(){
@@ -21,6 +23,11 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start(){
+
+        Initialize();
+    }
+
+    private void Initialize(){
         playerData = SaveSystem.LoadPlayerData();
         player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log("Player data loaded"+ playerData.gemCount);
@@ -44,6 +51,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator LoadSceneAndSetPosition(string sceneName)
     {
+
+        UIManager.Instance.ShowLoadingScreen();
+
+        yield return null;
+
         AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
 
         // Wait until the scene is fully loaded
@@ -55,6 +67,15 @@ public class GameManager : MonoBehaviour
         // Set the player's position after the scene has loaded
         player = GameObject.FindGameObjectWithTag("Player");
         player.transform.position = new Vector3((float) playerData.lastCheckpointX, (float) playerData.lastCheckpointY, (float) playerData.lastCheckpointZ);
+        
+        UIManager.Instance.HideLoadingScreen();
+        
+        if(firstStart){
+            Time.timeScale = 0;
+            UIManager.Instance.ShowMainMenu();
+        }else {
+            StartGame();
+        }
     }
 
     /* PRØVEDE AT OPDATERE DATAEN VED HJÆLP AF REFLECTION. DET VIRKEDE IKKE...
@@ -117,6 +138,13 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void StartGame(){
+        UIManager.Instance.ShowPlayerUI();
+        Time.timeScale = 1;
+        firstStart = false;
+
+    }
+
     private void SavePlayerData(){
         SaveSystem.Save(playerData);
     }
@@ -125,12 +153,28 @@ public class GameManager : MonoBehaviour
         playerData = SaveSystem.LoadPlayerData();
     }
 
-
+    public GameObject GetPlayer(){
+        return player;
+    }
+    
     public PlayerData GetPlayerData(){
         return playerData;
     }
 
     public void OnApplicationQuit(){
         SavePlayerData();
+    }
+
+    public void ResetToLastCheckpoint(){
+        if(playerData.lastCheckpointX != null && playerData.lastCheckpointY != null && playerData.lastCheckpointZ != null){
+            player.transform.position = new Vector3((float) playerData.lastCheckpointX, (float) playerData.lastCheckpointY, (float) playerData.lastCheckpointZ);
+            player.GetComponent<Health>().TakeDamage(1);
+        }else {
+            ResetAndKillPlayer();
+        }
+    }
+
+    public void ResetAndKillPlayer(){
+        Initialize();
     }
 }
