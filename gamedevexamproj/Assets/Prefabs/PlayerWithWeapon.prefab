@@ -301,6 +301,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8318052992856369372}
     m_Modifications:
+    - target: {fileID: 962527566123698076, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ca1f31fbb1fe84c9e9d96da0efe26114, type: 2}
+    - target: {fileID: 3168691828621883884, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
+      propertyPath: moveWithCustomTransform
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3589417865065117689, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
       propertyPath: m_Name
       value: Weapon
@@ -316,6 +324,14 @@ PrefabInstance:
     - target: {fileID: 3819198742907123061, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
       propertyPath: attackLayer.m_Bits
       value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3819198742907123061, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
+      propertyPath: wallGroundHitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: b7b5a6156961bac44a67504d42ce6fcf, type: 3}
+    - target: {fileID: 3819198742907123061, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
+      propertyPath: groundAndWallLayer.m_Bits
+      value: 136
       objectReference: {fileID: 0}
     - target: {fileID: 8384315855282316159, guid: a185821d6dc302b43bf9b5b037549cdf, type: 3}
       propertyPath: m_SortingOrder

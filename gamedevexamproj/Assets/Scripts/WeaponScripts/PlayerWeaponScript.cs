@@ -49,6 +49,7 @@ public class PlayerWeaponScript : MonoBehaviour {
         CheckAllHitAreas1();
         StartCoroutine(AttackAnimation());
     }
+    /*
     private void CheckAllHitAreas() {
         HashSet<Collider2D> processedHits = new HashSet<Collider2D>();
         foreach (Transform hitArea in hitAreas) {
@@ -72,6 +73,7 @@ public class PlayerWeaponScript : MonoBehaviour {
             }
         }
     }
+    */
    private void CheckAllHitAreas1() {
         foreach (Transform hitArea in hitAreas) {
             Vector2 hitAreaPosition = weapon.TransformPoint(hitArea.localPosition);
