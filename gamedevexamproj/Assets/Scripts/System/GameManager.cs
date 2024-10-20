@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get { return instance; } }
     private PlayerData playerData;
     private GameObject player;
+    private bool isLoading = false;
 
     private bool firstStart = true;
     //private ValueTuple<System.Attribute, System.Reflection.FieldInfo>[] dataFields;
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void Initialize(){
+        Time.timeScale = 0;
         playerData = SaveSystem.LoadPlayerData();
         player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log("Player data loaded"+ playerData.gemCount);
@@ -47,11 +49,16 @@ public class GameManager : MonoBehaviour
         if(playerData.health != null){
             player.GetComponent<Health>().SetHealth((int) playerData.health);
         }
+
+        if(!isLoading){
+            UIManager.Instance.ShowMainMenu();
+        }
+
     }
 
     private IEnumerator LoadSceneAndSetPosition(string sceneName)
     {
-
+        isLoading = true;
         UIManager.Instance.ShowLoadingScreen();
 
         yield return null;
@@ -156,7 +163,7 @@ public class GameManager : MonoBehaviour
     public GameObject GetPlayer(){
         return player;
     }
-    
+
     public PlayerData GetPlayerData(){
         return playerData;
     }
