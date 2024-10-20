@@ -8,9 +8,9 @@ public class PlayerWeaponScript : MonoBehaviour {
     [SerializeField] private Transform weaponRotationPoint;
     [SerializeField] private Transform weapon;
     [SerializeField] private float attackRange = 0.25f;
-    [SerializeField] private LayerMask attackLayer;
     [SerializeField] private LayerMask groundAndWallLayer; 
-    [SerializeField] private float damageAmount = 10f;
+    [SerializeField] private LayerMask attackLayer; 
+    [SerializeField] private int damageAmount = 1;
     [SerializeField] float attackDuration = 0.2f;
     [SerializeField] float swingAngle = 45f;
     [SerializeField] private float rotationOffset = 90f;
@@ -94,10 +94,10 @@ public class PlayerWeaponScript : MonoBehaviour {
     }
 
      private void ProcessHit(Collider2D hit, Vector2 hitAreaPosition) {
-        //Health healthScript = hit.GetComponent<Health>();
-        //if (healthScript != null) {
-        //    healthScript.TakeDamage(damageAmount);
-        //}
+        Health healthScript = hit.GetComponent<Health>();
+        if (healthScript != null) {
+            healthScript.TakeDamage(damageAmount);
+        }
         AttackAudioSource.PlayOneShot(hitSound);
         GameObject hitAnimInstance = hitEffectPool.GetPooledObject();
         Vector2 hitPosition = (hitAreaPosition + (Vector2)hit.transform.position) / 2f;

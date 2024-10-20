@@ -49,9 +49,15 @@ public class Health : MonoBehaviour
             Invincibility();
         }else{
             if(gameObject.tag == "Boss"){
+                health -= damage;
                 return;
             }
             
+            if(gameObject.tag == "Player"){
+                GameManager.Instance.ResetAndKillPlayer();
+                return;
+            }
+
             Flash();
             Die();
         }
@@ -90,5 +96,9 @@ public class Health : MonoBehaviour
 
     public int GetMaxHealth(){
         return maxHealth;
+    }
+
+    public void SetHealth(int newHealth){
+        health = newHealth;
     }
 }

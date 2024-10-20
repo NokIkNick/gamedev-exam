@@ -9,6 +9,7 @@ TagManager:
   - Background
   - Boss
   - Enemy
+  - Weapon
   layers:
   - Default
   - TransparentFX
