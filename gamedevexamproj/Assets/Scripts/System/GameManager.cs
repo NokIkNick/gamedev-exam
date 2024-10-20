@@ -24,8 +24,10 @@ public class GameManager : MonoBehaviour
 
     private void Start(){
 
-        
+        Initialize();
+    }
 
+    private void Initialize(){
         playerData = SaveSystem.LoadPlayerData();
         player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log("Player data loaded"+ playerData.gemCount);
@@ -49,12 +51,16 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator LoadSceneAndSetPosition(string sceneName)
     {
+
+        UIManager.Instance.ShowLoadingScreen();
+
+        yield return null;
+
         AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
 
         // Wait until the scene is fully loaded
         while (!asyncLoad.isDone)
         {
-            UIManager.Instance.ShowLoadingScreen();
             yield return null;
         }
 
@@ -62,13 +68,14 @@ public class GameManager : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         player.transform.position = new Vector3((float) playerData.lastCheckpointX, (float) playerData.lastCheckpointY, (float) playerData.lastCheckpointZ);
         
+        UIManager.Instance.HideLoadingScreen();
+        
         if(firstStart){
-            player.GetComponent<MovementController>().enabled = false;
+            Time.timeScale = 0;
             UIManager.Instance.ShowMainMenu();
         }else {
             StartGame();
         }
-        
     }
 
     /* PRØVEDE AT OPDATERE DATAEN VED HJÆLP AF REFLECTION. DET VIRKEDE IKKE...
@@ -133,7 +140,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(){
         UIManager.Instance.ShowPlayerUI();
-        player.GetComponent<MovementController>().enabled = true;
+        Time.timeScale = 1;
         firstStart = false;
 
     }
@@ -146,7 +153,10 @@ public class GameManager : MonoBehaviour
         playerData = SaveSystem.LoadPlayerData();
     }
 
-
+    public GameObject GetPlayer(){
+        return player;
+    }
+    
     public PlayerData GetPlayerData(){
         return playerData;
     }
@@ -165,6 +175,6 @@ public class GameManager : MonoBehaviour
     }
 
     public void ResetAndKillPlayer(){
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        Initialize();
     }
 }

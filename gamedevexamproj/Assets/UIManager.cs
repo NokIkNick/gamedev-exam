@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class UIManager : MonoBehaviour
     private GameObject mainMenu;
     private GameObject playerUI;
     private GameObject loadingScreen;
+    private Text playerHealth;
+    private Text playerGemCount;
 
     private void Awake()
     {
@@ -26,6 +29,16 @@ public class UIManager : MonoBehaviour
         playerUI = gameObject.transform.GetChild(1).gameObject;
         mainMenu = gameObject.transform.GetChild(2).gameObject;
 
+        playerHealth = playerUI.transform.GetChild(0).GetComponent<Text>();
+        playerGemCount = playerUI.transform.GetChild(1).GetComponent<Text>();
+
+    }
+
+    void Update(){
+        if(playerUI.activeSelf){
+            playerHealth.text = "Health: " + GameManager.Instance.GetPlayer().GetComponent<Health>().GetHealth();
+            playerGemCount.text = "Gems: " + GameManager.Instance.GetPlayerData().gemCount;
+        }
     }
 
 
@@ -45,10 +58,17 @@ public class UIManager : MonoBehaviour
 
     public void ShowLoadingScreen()
     {
+        Debug.Log("Showing loading screen");
         mainMenu.SetActive(false);
         playerUI.SetActive(false);
         loadingScreen.SetActive(true);
     }
 
-    
+    public void HideLoadingScreen()
+    {
+        Debug.Log("Hiding loading screen");
+        loadingScreen.SetActive(false);
+    }
+
+
 }
