@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     private void Initialize(){
         Time.timeScale = 0;
         playerData = SaveSystem.LoadPlayerData();
+
         player = GameObject.FindGameObjectWithTag("Player");
         Debug.Log("Player data loaded"+ playerData.gemCount);
 
@@ -41,8 +42,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("Players weapon:" + player.transform.parent.GetChild(1).gameObject.name);
         if(playerData.hasWeapon != null){
             player.transform.parent.transform.GetChild(1).gameObject.SetActive((bool) playerData.hasWeapon);
+            player.transform.parent.transform.GetChild(1).GetChild(0).GetComponent<PlayerWeaponScript>().SetCanAttack((bool) playerData.hasWeapon);
         }else {
             playerData.hasWeapon = false;
+            player.transform.parent.transform.GetChild(1).GetChild(0).GetComponent<PlayerWeaponScript>().SetCanAttack((bool) playerData.hasWeapon);
         }
         player.transform.parent.transform.GetChild(1).gameObject.SetActive((bool) playerData.hasWeapon);
 
@@ -143,6 +146,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Health updated to: " + playerData.health);
         }
 
+        SavePlayerData();
     }
 
     public void StartGame(){

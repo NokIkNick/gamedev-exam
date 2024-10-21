@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class PlayerWeaponScript : MonoBehaviour {
@@ -24,7 +25,7 @@ public class PlayerWeaponScript : MonoBehaviour {
     [SerializeField] private AudioClip hitSound;
     [SerializeField] private AudioClip wallGroundHitSound;
   
-    private bool canAttack = true;
+    [SerializeField] private bool canAttack = true;
     private Vector3 mousePosition;
     HashSet<Collider2D> uniqueHits = new HashSet<Collider2D>();
 
@@ -42,6 +43,7 @@ public class PlayerWeaponScript : MonoBehaviour {
 
     public void PerformAttack() {
         if (!canAttack) return;
+        if(!gameObject.activeSelf) return;
         canAttack = false; 
         Debug.Log("PerformAttack");
         AttackAudioSource.PlayOneShot(attackSound);
@@ -74,6 +76,15 @@ public class PlayerWeaponScript : MonoBehaviour {
         }
     }
     */
+
+    public bool GetCanAttack(){
+        return canAttack;
+    }
+
+    public void SetCanAttack(bool canAttack){
+        this.canAttack = canAttack;
+    }
+
    private void CheckAllHitAreas1() {
         foreach (Transform hitArea in hitAreas) {
             Vector2 hitAreaPosition = weapon.TransformPoint(hitArea.localPosition);
